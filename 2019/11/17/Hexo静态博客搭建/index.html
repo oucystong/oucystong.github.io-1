@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo静态博客的搭建下载安装Hexo1.去网站下载node.js的LTS（长期支持版） 1https:&#x2F;&#x2F;nodejs.org&#x2F;en&#x2F;  2.切换root成用户 12sudo su#输入密码  3.查看node和npm的版本 12node -vnpm -v  4.使用npm安装淘宝的cnpm，可使下载速度更快 1234#全局安装npm install -g cnpm --registry=htt">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-16T17:40:56.419Z">
+<meta property="og:updated_time" content="2019-11-16T18:08:14.901Z">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -165,7 +165,7 @@
 
         
         <a href="/2019/11/17/Hexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" class="archive-article-date">
-  	<time datetime="2019-11-16T16:08:40.656Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-17</time>
+  	<time datetime="2019-11-16T18:08:14.901Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-11-17</time>
 </a>
         
       </header>
@@ -236,6 +236,15 @@
 <h2 id="以后的个人博客地址"><a href="#以后的个人博客地址" class="headerlink" title="以后的个人博客地址"></a>以后的个人博客地址</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>注意问题：</p>
+<p>1.所有命令的执行都是基于建立博客的根目录进行，即BlogResources，除非使用vim编辑自己的博文会切换到_post目录下面，所以时常使用pwd查看当前所在的路径。</p>
+<p>2.建议使用root用户权限发布博文，发布博文时使用如下命令切换。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
+
+<p>3.切换到普通用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
+
+<p>4.修改博文时的最好办法：切换到root用户，pwd查看当前路径，切换到博文所在路径，使用open document命令将Markdown文件以默认程序打开，比如Typora，可以以所见即所得的方式编辑Markdown文档（使用vim编辑各种配置文件还行，编辑Markdown文件有点浪费时间），编辑完之后在终端以root身份clean、gerate、server预览、deploy推送到remote。</p>
+<p>可能遇到的问题：open document，文档被锁定，无法编辑，直接将该文档进行复制出一个副本，对副本进行编辑，将原文件删除，将编辑好之后的新文件放入。</p>
 
       
 
@@ -329,18 +338,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/11/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          我的第一篇博客
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/11/16/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
+    <a href="/2019/11/17/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">我的第一篇博客</div>
       <i class="icon-circle-right"></i>
     </a>
   
