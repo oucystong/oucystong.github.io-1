@@ -1,6 +1,769 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>JDBC课堂笔记</title>
+    <url>/2019/11/25/JDBC%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. JDBC基本概念
+2. 快速入门
+3. 对JDBC中各个接口和类详解</code></pre><a id="more"></a><h2 id="JDBC："><a href="#JDBC：" class="headerlink" title="JDBC："></a>JDBC：</h2><pre><code>1. 概念：Java DataBase Connectivity  Java 数据库连接， Java语言操作数据库
+    * JDBC本质：其实是官方（sun公司）定义的一套操作所有关系型数据库的规则，即接口。各个数据库厂商去实现这套接口，提供数据库驱动jar包。我们可以使用这套接口（JDBC）编程，真正执行的代码是驱动jar包中的实现类。
+
+例如：
+Person接口    Worker实现类（实现了Person接口）   Person p=new Worker();   p.eat();
+
+2. 快速入门：
+    * 步骤：
+        1. 导入驱动jar包 mysql-connector-java-5.1.37-bin.jar--里面有驱动的java源代码和class文件，只需要倒入class文件的jar包即可。
+            1.复制mysql-connector-java-5.1.37-bin.jar到项目的libs目录下--libs目录建在module下面，和src是同级目录。
+            2.右键--&gt;Add As Library
+        2. 注册驱动
+        3. 获取数据库连接对象 Connection
+        4. 定义sql
+        5. 获取执行sql语句的对象 Statement
+        6. 执行sql，接受返回结果
+        7. 处理结果
+        8. 释放资源
+
+    * 代码实现：
+          //1. 导入驱动jar包
+        //2.注册驱动
+        Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+        //3.获取数据库连接对象
+        Connection conn = DriverManager.getConnection(&quot;jdbc:mysql://localhost:3306/db3&quot;, &quot;root&quot;, &quot;root&quot;);
+        //4.定义sql语句
+        String sql = &quot;update account set balance = 500 where id = 1&quot;;
+        //5.获取执行sql的对象 Statement
+        Statement stmt = conn.createStatement();
+        //6.执行sql
+        int count = stmt.executeUpdate(sql);
+        //7.处理结果
+        System.out.println(count);
+        //8.释放资源
+        stmt.close();
+        conn.close();
+
+3. 详解各个对象：
+    1. DriverManager：驱动管理对象
+        * 功能：
+            1. 注册驱动：告诉程序该使用哪一个数据库驱动jar
+                static void registerDriver(Driver driver) :注册与给定的驱动程序 DriverManager 。 
+                写代码使用：  Class.forName(&quot;com.mysql.jdbc.Driver&quot;);//把该全类名的class文件加载进内存，有一些代码被自动执行，这一部分代码放在静态代码块中。
+                通过查看源码发现：在com.mysql.jdbc.Driver类中存在静态代码块
+                 static {
+                        try {
+                            java.sql.DriverManager.registerDriver(new Driver());
+                        } catch (SQLException E) {
+                            throw new RuntimeException(&quot;Can&apos;t register driver!&quot;);
+                        }
+                    }
+
+                注意：mysql5之后的驱动jar包可以省略注册驱动的步骤。
+                mysql-connector-java-5.1.37-bin/METAINF/services/java.sql.Driver
+            2. 获取数据库连接：
+                * 方法：static Connection getConnection(String url, String user, String password) 
+                * 参数：
+                    * url：指定连接的路径
+                        * 语法：jdbc:mysql://ip地址(域名):端口号/数据库名称
+                        * 例子：jdbc:mysql://localhost:3306/db3
+                        * 细节：如果连接的是本机mysql服务器，并且mysql服务默认端口是3306，则url可以简写为：jdbc:mysql:///数据库名称
+                    * user：用户名
+                    * password：密码 
+                * 查看mysql在本机上的端口：
+                    * 登陆mysql，执行show global variables like &apos;port&apos;;
+    2. Connection：数据库连接对象
+        1. 功能：
+            1. 获取执行sql 的对象
+                * Statement createStatement()
+                * PreparedStatement prepareStatement(String sql)  
+            2. 管理事务：
+                * 开启事务：setAutoCommit(boolean autoCommit) ：调用该方法设置参数为false，即开启事务
+                * 提交事务：commit() 
+                * 回滚事务：rollback() 
+    3. Statement：执行sql的对象
+        1. 执行sql
+            1. boolean execute(String sql) ：可以执行任意的sql 了解 
+            2. int executeUpdate(String sql) ：执行DML（insert、update、delete）语句、DDL(create，alter、drop)语句
+                * 返回值：影响的行数，可以通过这个影响的行数判断DML语句是否执行成功 返回值&gt;0的则执行成功，反之，则失败。
+            3. ResultSet executeQuery(String sql)  ：执行DQL（select)语句
+        2. 练习：
+            1. account表 添加一条记录
+            2. account表 修改记录
+            3. account表 删除一条记录
+
+            代码：
+                Statement stmt = null;
+                Connection conn = null;
+                try {
+                    //1. 注册驱动
+                    Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+                    //2. 定义sql
+                    String sql = &quot;insert into account values(null,&apos;王五&apos;,3000)&quot;;
+                    //3.获取Connection对象
+                    conn = DriverManager.getConnection(&quot;jdbc:mysql:///db3&quot;, &quot;root&quot;, &quot;root&quot;);
+                    //4.获取执行sql的对象 Statement
+                    stmt = conn.createStatement();
+                    //5.执行sql
+                    int count = stmt.executeUpdate(sql);//影响的行数
+                    //6.处理结果
+                    System.out.println(count);
+                    if(count &gt; 0){
+                        System.out.println(&quot;添加成功！&quot;);
+                    }else{
+                        System.out.println(&quot;添加失败！&quot;);
+                    }
+
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }finally {
+                    //stmt.close();
+                    //7. 释放资源
+                    //避免空指针异常
+                    if(stmt != null){
+                        try {
+                            stmt.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if(conn != null){
+                        try {
+                            conn.close();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+    4. ResultSet：结果集对象,封装查询结果
+        * boolean next(): 游标向下移动一行，判断当前行是否是最后一行末尾(是否有数据)，如果是，则返回false，如果不是则返回true
+        * getXxx(参数):获取数据
+            * Xxx：代表数据类型   如： int getInt() ,    String getString()
+            * 参数：
+                1. int：代表列的编号,从1开始   如： getString(1)
+                2. String：代表列名称。 如： getDouble(&quot;balance&quot;)
+
+        * 注意：
+            * 使用步骤：
+                1. 游标向下移动一行
+                2. 判断是否有数据
+                3. 获取数据
+
+               //循环判断游标是否是最后一行末尾。
+                while(rs.next()){
+                    //获取数据
+                    //6.2 获取数据
+                    int id = rs.getInt(1);
+                    String name = rs.getString(&quot;name&quot;);
+                    double balance = rs.getDouble(3);
+
+                    System.out.println(id + &quot;---&quot; + name + &quot;---&quot; + balance);
+                }
+
+        * 练习：
+            * 定义一个方法，查询emp表的数据将其封装为对象，然后装载集合，返回。
+                1. 定义Emp类
+                2. 定义方法 public List&lt;Emp&gt; findAll(){}
+                3. 实现方法 select * from emp;
+                提示1：遍历获取数据、创建emp对象并且赋值、装载集合、
+                提示2：最后申请的资源最先释放
+                提示3：封装对象使用List集合
+                提示4：循环中如果每次都new一个对象的话，就会浪费堆内存的空间，可以在循环外面new一个对象，在循环里面使用这个对象，实现对象的复用，使用完之后将这个对象复原为一个新对象以便于下次循环使用这个对象的时候确定这是一个新对象。
+    5. PreparedStatement：执行sql的对象    extend Statement
+        1. SQL注入问题：在拼接sql时，有一些sql的特殊关键字参与字符串的拼接。会造成安全性问题
+            1. 输入用户随便，输入密码：a&apos; or &apos;a&apos; = &apos;a
+            2. sql：select * from user where username = &apos;fhdsjkf&apos; and password = &apos;a&apos; or &apos;a&apos; = &apos;a&apos; 
+
+        2. 解决sql注入问题：使用PreparedStatement对象来解决
+        3. 预编译的SQL（动态sql）：参数使用?作为占位符
+        4. 步骤：
+            1. 导入驱动jar包 mysql-connector-java-5.1.37-bin.jar
+            2. 注册驱动
+            3. 获取数据库连接对象 Connection
+            4. 定义sql
+                * 注意：sql的参数使用？作为占位符。 如：select * from user where username = ? and password = ?;
+            5. 获取执行sql语句的对象 PreparedStatement  Connection.prepareStatement(String sql) 
+            6. 给？赋值：
+                * 方法： setXxx(参数1,参数2)
+                    * 参数1：？的位置编号 从1 开始
+                    * 参数2：？的值
+                    * 具体的使用查看API文档
+            7. 执行sql，接受返回结果，不需要传递sql语句
+            8. 处理结果
+            9. 释放资源
+
+        5. 注意：后期都会使用PreparedStatement来完成增删改查的所有操作
+            1. 可以防止SQL注入
+            2. 效率更高
+            3. 我们通常使用JDBC来进行表中数据的增删改查，即操作DML和DQL语句，对于DDL通常是设计好数据库和表之后供我们进行操作的，对于DCL更加用不到我们去操作了，通常是由DBA去操作，作为Java开发人员对于这部分的内容了解即可。
+            4. 预编译sql就是执行动态sql，动态sql不会产生sql注入的问题，但是静态sql（字符串拼接的sql语句）很容易出现sql注入的问题。</code></pre><h2 id="抽取JDBC工具类-：-JDBCUtils"><a href="#抽取JDBC工具类-：-JDBCUtils" class="headerlink" title="抽取JDBC工具类 ： JDBCUtils"></a>抽取JDBC工具类 ： JDBCUtils</h2><pre><code>* 目的：简化书写
+* 提示：各种工具类一般是为了方便进行调用都使用static进行修饰，即通常定义静态方法。
+* 分析：
+    1. 注册驱动也抽取
+    2. 抽取一个方法获取连接对象
+        * 需求：不想传递参数（麻烦），还得保证工具类的通用性。
+        * 解决：配置文件  开发中很常用的方法
+            jdbc.properties
+                url=
+                user=
+                password=
+                driver=
+    3. 抽取一个方法释放资源
+
+
+* 代码实现：
+    public class JDBCUtils {
+    private static String url;
+    private static String user;
+    private static String password;
+    private static String driver;
+    /**
+     * 文件的读取，只需要读取一次即可拿到这些值。使用静态代码块
+     * 静态代码块会随着类的加载而执行，并且只会执行一次。
+     */
+    static{
+        //读取资源文件，获取值。
+
+        try {
+            //1. 创建Properties集合类。
+            Properties pro = new Properties();
+
+            //获取src路径下的文件的方式---&gt;ClassLoader 类加载器
+            ClassLoader classLoader = JDBCUtils.class.getClassLoader();
+            URL res  = classLoader.getResource(&quot;jdbc.properties&quot;);
+            String path = res.getPath();
+            System.out.println(path);///D:/IdeaProjects/itcast/out/production/day04_jdbc/jdbc.properties
+            //2. 加载文件
+           // pro.load(new FileReader(&quot;D:\\IdeaProjects\\itcast\\day04_jdbc\\src\\jdbc.properties&quot;));
+            pro.load(new FileReader(path));
+
+            //3. 获取数据，赋值
+            url = pro.getProperty(&quot;url&quot;);
+            user = pro.getProperty(&quot;user&quot;);
+            password = pro.getProperty(&quot;password&quot;);
+            driver = pro.getProperty(&quot;driver&quot;);
+            //4. 注册驱动
+            Class.forName(driver);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+         * 获取连接
+         * @return 连接对象
+         */
+      public static Connection getConnection() throws SQLException {
+          return DriverManager.getConnection(url, user, password);
+      }
+
+    /**
+     * 释放资源
+     * @param stmt
+     * @param conn
+     */
+    public static void close(Statement stmt,Connection conn){
+        if( stmt != null){
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if( conn != null){
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+        /**
+         * 释放资源-- 重载
+         * @param stmt
+         * @param conn
+         */
+        public static void close(ResultSet rs,Statement stmt, Connection conn){
+            if( rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if( stmt != null){
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if( conn != null){
+              try {
+                  conn.close();
+              } catch (SQLException e) {
+                  e.printStackTrace();
+              }
+          }
+    }
+    }
+
+* 练习：
+    * 需求：
+        1. 通过键盘录入用户名和密码
+        2. 判断用户是否登录成功
+            * select * from user where username = &quot;&quot; and password = &quot;&quot;;
+            * 如果这个sql有查询结果，则成功，反之，则失败
+
+    * 步骤：
+        1. 创建数据库表 user
+            CREATE TABLE USER(
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                username VARCHAR(32),
+                PASSWORD VARCHAR(32)
+
+            );
+
+            INSERT INTO USER VALUES(NULL,&apos;zhangsan&apos;,&apos;123&apos;);
+            INSERT INTO USER VALUES(NULL,&apos;lisi&apos;,&apos;234&apos;);
+
+        2. 代码实现：
+            public class JDBCDemo9 {
+
+                public static void main(String[] args) {
+                    //1.键盘录入，接受用户名和密码
+                    Scanner sc = new Scanner(System.in);
+                    System.out.println(&quot;请输入用户名：&quot;);
+                    String username = sc.nextLine();
+                    System.out.println(&quot;请输入密码：&quot;);
+                    String password = sc.nextLine();
+                    //2.调用方法
+                    boolean flag = new JDBCDemo9().login(username, password);
+                    //3.判断结果，输出不同语句
+                    if(flag){
+                        //登录成功
+                        System.out.println(&quot;登录成功！&quot;);
+                    }else{
+                        System.out.println(&quot;用户名或密码错误！&quot;);
+                    }            
+          }
+                    /**
+                     * 登录方法
+                     */
+                    public boolean login(String username ,String password){
+                        if(username == null || password == null){
+                            return false;
+                        }
+                        //连接数据库判断是否登录成功
+                        Connection conn = null;
+                        Statement stmt =  null;
+                        ResultSet rs = null;
+                        //1.获取连接
+                        try {
+                            conn =  JDBCUtils.getConnection();
+                            //2.定义sql
+                            String sql = &quot;select * from user where username = &apos;&quot;+username+&quot;&apos; and password = &apos;&quot;+password+&quot;&apos; &quot;;
+                            //3.获取执行sql的对象
+                            stmt = conn.createStatement();
+                            //4.执行查询
+                            rs = stmt.executeQuery(sql);
+                            //5.判断
+                           /* if(rs.next()){//如果有下一行，则返回true
+                                return true;
+                            }else{
+                                return false;
+                            }*/
+                           return rs.next();//如果有下一行，则返回true
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }finally {
+                            JDBCUtils.close(rs,stmt,conn);
+                        }
+                        return false;
+                    }
+                }</code></pre><h2 id="JDBC控制事务："><a href="#JDBC控制事务：" class="headerlink" title="JDBC控制事务："></a>JDBC控制事务：</h2><pre><code>1. 事务：一个包含多个步骤的业务操作。如果这个业务操作被事务管理，则这多个步骤要么同时成功，要么同时失败。
+2. 操作：
+    1. 开启事务
+    2. 提交事务
+    3. 回滚事务
+3. 使用Connection对象来管理事务
+    * 开启事务：setAutoCommit(boolean autoCommit) ：调用该方法设置参数为false，即开启事务
+        * 在执行sql之前开启事务
+    * 提交事务：commit() 
+        * 当所有sql都执行完提交事务
+    * 回滚事务：rollback() 
+        * 在catch中回滚事务
+
+4. 代码：
+    public class JDBCDemo10 {
+
+        public static void main(String[] args) {
+            Connection conn = null;
+            PreparedStatement pstmt1 = null;
+            PreparedStatement pstmt2 = null;
+
+            try {
+                //1.获取连接
+                conn = JDBCUtils.getConnection();
+                //开启事务
+                conn.setAutoCommit(false);
+
+                //2.定义sql
+                //2.1 张三 - 500
+                String sql1 = &quot;update account set balance = balance - ? where id = ?&quot;;
+                //2.2 李四 + 500
+                String sql2 = &quot;update account set balance = balance + ? where id = ?&quot;;
+                //3.获取执行sql对象
+                pstmt1 = conn.prepareStatement(sql1);
+                pstmt2 = conn.prepareStatement(sql2);
+                //4. 设置参数
+                pstmt1.setDouble(1,500);
+                pstmt1.setInt(2,1);
+
+                pstmt2.setDouble(1,500);
+                pstmt2.setInt(2,2);
+                //5.执行sql
+                pstmt1.executeUpdate();
+                // 手动制造异常
+                int i = 3/0;
+
+                pstmt2.executeUpdate();
+                //提交事务
+                conn.commit();
+            } catch (Exception e) {
+                //事务回滚
+                try {
+                    if(conn != null) {
+                        conn.rollback();
+                    }
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+                e.printStackTrace();
+            }finally {
+                JDBCUtils.close(pstmt1,conn);
+                JDBCUtils.close(pstmt2,null);
+            }         
+            }        
+        }</code></pre><p>​            </p>
+]]></content>
+      <categories>
+        <category>JDBC</category>
+      </categories>
+      <tags>
+        <tag>JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL基础</title>
+    <url>/2019/11/22/MySQL%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 数据库的基本概念</span><br><span class="line">2. MySQL数据库软件</span><br><span class="line">   1. 安装</span><br><span class="line">   2. 卸载</span><br><span class="line">   3. 配置</span><br><span class="line">3. SQL</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+<h2 id="数据库的基本概念"><a href="#数据库的基本概念" class="headerlink" title="数据库的基本概念"></a>数据库的基本概念</h2><pre><code>1. 数据库的英文单词： DataBase 简称 ： DB
+2. 什么数据库？
+    * 用于存储和管理数据的仓库。Excel？存储+管理
+3. 数据库的特点：
+    1. 持久化存储数据的。其实数据库就是一个文件系统
+    2. 方便存储和管理数据
+    3. 使用了统一的方式操作数据库 -- SQL
+4. 常见的数据库软件
+    * 参见《MySQL基础.pdf》</code></pre><h2 id="MySQL数据库软件"><a href="#MySQL数据库软件" class="headerlink" title="MySQL数据库软件"></a>MySQL数据库软件</h2><pre><code>1. 安装
+    * 参见《MySQL基础.pdf》  默认端口：3306
+2. 卸载
+    1. 去mysql的安装目录找到my.ini文件
+        * 复制 datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
+    2. 卸载MySQL
+    3. 删除C:/ProgramData目录下的MySQL文件夹。
+
+3. 配置
+    * MySQL服务启动
+        1. 手动（每次都是手动打开Mysql服务）或者自动（开机自动启动）
+        2. cmd--&gt; services.msc 打开服务的窗口
+        3. 使用管理员打开cmd
+            * net start mysql : 启动mysql的服务
+            * net stop mysql:关闭mysql服务
+    * MySQL登录
+        1. mysql -uroot -p密码
+        2. mysql -hip -uroot -p连接目标的密码
+        3. mysql --host=ip --user=root --password=连接目标的密码
+    * MySQL退出
+        1. exit
+        2. quit
+    注意：Mac下载了Mysql之后需要进行环境变量的配置，才可以在命令行中使用Mysql的相关命令。
+    在~/.bash_profile中追加  PATH=$PATH:/usr/local/mysql/bin
+    使其发挥作用：source ~/.bash_profile
+
+    * MySQL目录结构
+        1. MySQL安装目录：basedir=&quot;D:/develop/MySQL/&quot;
+            * 配置文件 my.ini
+        2. MySQL数据目录：datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
+            * 几个概念
+                * 数据库：文件夹
+                * 表：文件
+                * 数据：数据
+        3.通过Mac偏好设置中的配置就可以看到上述的内容，在terminal中要会进行查看，善于使用open在finder中展示，datadir普通用户是进不去的，使用sudo su进入到文件夹中。</code></pre><h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><pre><code>1.什么是SQL？
+    Structured Query Language：结构化查询语言
+    其实就是定义了操作所有关系型数据库的规则。每一种数据库操作的方式存在不一样的地方，称为“方言”。
+
+2.SQL通用语法
+    1. SQL 语句可以单行或多行书写，以分号结尾。show databases;
+    2. 可使用空格和缩进来增强语句的可读性。
+    3. MySQL 数据库的 SQL 语句不区分大小写，关键字建议使用大写。
+    4. 3 种注释
+        * 单行注释: -- 注释内容 或 #注释内容(mysql特有) 
+        * 多行注释: /*注释*/
+        * 单行注释中--的方式必须要有空格，其余没说明的情况就是不需要有空格。
+
+3. SQL分类
+    1) DDL(Data Definition Language)数据定义语言
+        用来定义数据库对象：数据库，表，列等。关键字：create, drop,alter 等
+    2) DML(Data Manipulation Language)数据操作语言
+        用来对数据库中表的数据进行增删改。关键字：insert, delete, update 等
+    3) DQL(Data Query Language)数据查询语言
+        用来查询数据库中表的记录(数据)。关键字：select, where 等
+    4) DCL(Data Control Language)数据控制语言(了解)
+        用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</code></pre><h3 id="DDL-操作数据库、表"><a href="#DDL-操作数据库、表" class="headerlink" title="DDL:操作数据库、表"></a>DDL:操作数据库、表</h3><pre><code>1. 操作数据库：CRUD
+    1. C(Create):创建
+        * 创建数据库：
+            * create database 数据库名称;
+        * 创建数据库，判断不存在，再创建：
+            * create database if not exists 数据库名称;
+        * 创建数据库，并指定字符集
+            * create database 数据库名称 character set 字符集名;
+        * 练习： 创建db4数据库，判断是否存在，并制定字符集为gbk
+            * create database if not exists db4 character set gbk;
+    2. R(Retrieve)：查询
+        * 查询所有数据库的名称:
+            * show databases;
+            * datadir下面有三个文件夹也就是有三个database，但是为什么我们在终端显示的时候会有四个呢？
+            information_schema：描述mysql数据库的信息的，比如有哪些表？以后要学习视图会用到，并没有实际的物理文件。
+            mysql：核心数据库，存了很多的表
+            performance_schema：对性能提升做操作的数据库，存了很多表
+            sys：随便动，这是一个空的数据库
+            没事别乱动上面的几个数据库的内容。
+
+        * 查询某个数据库的字符集:查询某个数据库的创建语句
+            * show create database 数据库名称;
+    3. U(Update):修改
+        * 修改数据库的字符集
+            * alter database 数据库名称 character set 字符集名称;
+    4. D(Delete):删除
+        * 删除数据库
+            * drop database 数据库名称;
+        * 判断数据库存在，存在再删除
+            * drop database if exists 数据库名称;
+    5. 使用数据库
+        * 查询当前正在使用的数据库名称
+            * select database();
+        * 使用数据库
+            * use 数据库名称;
+
+
+2. 操作表
+    1. C(Create):创建
+        1. 语法：
+            create table 表名(
+                列名1 数据类型1,
+                列名2 数据类型2,
+                ....
+                列名n 数据类型n
+            );
+            * 注意：最后一列，不需要加逗号（,）
+            * 数据库类型：
+                1. int：整数类型
+                    * age int,
+                2. double:小数类型
+                    * score double(5,2)
+                3. date:日期，只包含年月日，yyyy-MM-dd
+                4. datetime:日期，包含年月日时分秒     yyyy-MM-dd HH:mm:ss
+                5. timestamp:时间戳类型    包含年月日时分秒     yyyy-MM-dd HH:mm:ss    
+                    * 如果将来不给这个字段赋值，或赋值为null，则默认使用当前的系统时间，来自动赋值
+
+                6. varchar：字符串
+                    * name varchar(20):姓名最大20个字符
+                    * zhangsan 8个字符  张三 2个字符
+
+
+        * 创建表
+            create table student(
+                id int,
+                name varchar(32),
+                age int ,
+                score double(4,1),
+                birthday date,
+                insert_time timestamp
+            );
+        * 复制表：
+            * create table 表名 like 被复制的表名;          
+    2. R(Retrieve)：查询
+        * 查询某个数据库中所有的表名称
+            * show tables;
+        * 查询表结构
+            * desc 表名;  description
+    3. U(Update):修改
+        1. 修改表名
+            alter table 表名 rename to 新的表名;
+        2. 修改表的字符集
+            alter table 表名 character set 字符集名称;
+        3. 添加一列
+            alter table 表名 add 列名 数据类型;
+        4. 修改列名称 类型
+            alter table 表名 change 列名 新列别 新数据类型;//改列名和类型
+            alter table 表名 modify 列名 新数据类型;//只改类型
+        5. 删除列
+            alter table 表名 drop 列名;
+    4. D(Delete):删除
+        * drop table 表名;
+        * drop table  if exists 表名 ;</code></pre><ul>
+<li>客户端图形化工具：SQLYog</li>
+<li>Mac端有哪些好用的数据库客户端软件？Workbench这是Mysql官方的数据库客户端。DataGrip是jetbrain大厂的数据库客户端，很好用。</li>
+</ul>
+<h3 id="DML：增删改表中数据"><a href="#DML：增删改表中数据" class="headerlink" title="DML：增删改表中数据"></a>DML：增删改表中数据</h3><pre><code>1. 添加数据：
+    * 语法：
+        * insert into 表名(列名1,列名2,...列名n) values(值1,值2,...值n);
+    * 注意：
+        1. 列名和值要一一对应。
+        2. 如果表名后，不定义列名，则默认给所有列添加值
+            insert into 表名 values(值1,值2,...值n);
+        3. 除了数字类型，其他类型需要使用引号(单双都可以)引起来
+2. 删除数据：
+    * 语法：
+        * delete from 表名 [where 条件]
+    * 注意：
+        1. 如果不加条件，则删除表中所有记录。
+        2. 如果要删除所有记录
+            1. delete from 表名; -- 不推荐使用。有多少条记录就会执行多少次删除操作
+            2. TRUNCATE TABLE 表名; -- 推荐使用，效率更高 先删除表，然后再创建一张一样的表。
+3. 修改数据：
+    * 语法：
+        * update 表名 set 列名1 = 值1, 列名2 = 值2,... [where 条件];
+
+    * 注意：
+        1. 如果不加任何条件，则会将表中所有记录全部修改。</code></pre><h3 id="DQL：查询表中的记录"><a href="#DQL：查询表中的记录" class="headerlink" title="DQL：查询表中的记录"></a>DQL：查询表中的记录</h3><pre><code>* select * from 表名;
+
+1. 语法：
+    select
+        字段列表  多个字段逗号分隔
+    from
+        表名列表  多个表名逗号分隔
+    where
+        条件列表
+    group by
+        分组字段  分组（男生组和女生组）
+    having
+        分组之后的条件
+    order by
+        排序   升序和降序
+    limit
+        分页限定
+
+
+2. 基础查询
+    1. 多个字段的查询
+        select 字段名1，字段名2... from 表名；
+        * 注意：
+            * 如果查询所有字段，则可以使用*来替代字段列表。
+    2. 去除重复：
+        * distinct
+        保证结果集中的两条记录完全一样才可以去重。
+    3. 计算列
+        * 一般可以使用四则运算计算一些列的值。（一般只会进行数值型的计算）
+        * ifnull(表达式1,表达式2)：null参与的运算，计算结果都为null
+            * 表达式1：哪个字段需要判断是否为null
+            * 如果该字段为null后的替换值。
+    4. 起别名：
+        * as：as也可以省略，用一个或者多个空格代替
+
+示例代码：
+-- 查询姓名和年龄
+select student.name,student.age from student;
+-- 查询地址
+select student.address from student;
+-- 去除重复
+select distinct student.address from student;
+-- 保证结果集中的两条记录完全一样才可以去重。
+select distinct student.name,student.address from student;
+-- 四则运算
+select student.name,student.math,student.english,student.math+student.english from student;
+-- 四则运算定义别名
+select student.name as 名字,student.math as 数学,student.english as 英语 from student;
+-- ifnull函数的使用
+select student.name,student.math,student.english,student.math+ifnull(student.english,0) as 总分 from student;
+
+
+3. 条件查询
+    1. where子句后跟条件
+    2. 运算符
+        * &gt; 、&lt; 、&lt;= 、&gt;= 、= 、&lt;&gt;或者!=
+        * BETWEEN...AND  包含两边的值
+        * IN(集合) 
+        * LIKE：模糊查询
+            * 占位符：
+                * _:单个任意字符
+                * %:多个任意字符（包括零个字符）
+                * 在某些特殊的情况下，查询的条件丽需要使用下划线或者百分号，不希望sql把下划线和百分号当成通配符使用，这就需要使用到转义字符，mysql使用反斜杠\作为转义字符。标准sql语句并没有提供反斜杠\的转义字符，而是使用escape关键字显示进行转义。
+-- 标准sql中选出名字以下划线开头的学生
+select * from student where student.name like &apos;\_%&apos; escape &apos;\&apos;;
+        * IS NULL    IS NOT NULL  NULL值不能使用=或者!=来进行判断，只能通过IS NULL或者IS NOT NULL
+        * and  或 &amp;&amp; 推荐使用英文的
+        * or  或 || 推荐使用英文的
+        * not  或 !  推荐使用英文的
+
+            -- 查询年龄大于20岁
+
+            SELECT * FROM student WHERE age &gt; 20;
+
+            SELECT * FROM student WHERE age &gt;= 20;
+
+            -- 查询年龄等于20岁
+            SELECT * FROM student WHERE age = 20;
+
+            -- 查询年龄不等于20岁
+            SELECT * FROM student WHERE age != 20;
+            SELECT * FROM student WHERE age &lt;&gt; 20;
+
+            -- 查询年龄大于等于20 小于等于30
+
+            SELECT * FROM student WHERE age &gt;= 20 &amp;&amp;  age &lt;=30;
+            SELECT * FROM student WHERE age &gt;= 20 AND  age &lt;=30;
+            SELECT * FROM student WHERE age BETWEEN 20 AND 30;
+
+            -- 查询年龄22岁，18岁，25岁的信息
+            SELECT * FROM student WHERE age = 22 OR age = 18 OR age = 25;
+            SELECT * FROM student WHERE age IN (22,18,25);
+
+            -- 查询英语成绩为null
+            SELECT * FROM student WHERE english = NULL; -- 不对的。null值不能使用 = （!=） 判断
+
+            SELECT * FROM student WHERE english IS NULL;
+
+            -- 查询英语成绩不为null
+            SELECT * FROM student WHERE english  IS NOT NULL;
+            -- 查询姓马的有哪些？ like
+            SELECT * FROM student WHERE NAME LIKE &apos;马%&apos;;
+            -- 查询姓名第二个字是化的人
+            SELECT * FROM student WHERE NAME LIKE &quot;_化%&quot;;
+            -- 查询姓名是3个字的人
+            SELECT * FROM student WHERE NAME LIKE &apos;___&apos;;
+            -- 查询姓名中包含德的人
+      SELECT * FROM student WHERE NAME LIKE &apos;%德%&apos;;</code></pre><p>​                </p>
+<p>​    </p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MySQL多表&amp;事务</title>
     <url>/2019/11/22/MySQL%E5%A4%9A%E8%A1%A8&amp;%E4%BA%8B%E5%8A%A1/</url>
     <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. 多表查询
@@ -468,90 +1231,6 @@
       </tags>
   </entry>
   <entry>
-    <title>搭建Hexo静态博客</title>
-    <url>/2019/11/22/%E6%90%AD%E5%BB%BAHexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="下载安装Hexo"><a href="#下载安装Hexo" class="headerlink" title="下载安装Hexo"></a>下载安装Hexo</h2><p>1.去网站下载node.js的LTS（长期支持版）</p><a id="more"></a>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">https://nodejs.org/en/</span><br></pre></td></tr></table></figure>
-
-<p>2.切换root成用户</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
-
-<p>3.查看node和npm的版本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-
-<p>4.使用npm安装淘宝的cnpm，可使下载速度更快</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line">#查看cnpm版本</span><br><span class="line">cnpm -v</span><br></pre></td></tr></table></figure>
-
-<p>5.安装Hexo</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">cnpm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-
-<p>6.查看Hexo版本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用Hexo"><a href="#使用Hexo" class="headerlink" title="使用Hexo"></a>使用Hexo</h2><p>1.建立写博客的目录BlogResources，所有的内容都在此目录中，如果过程中遇到了什么错误，直接删除Hexo目录删除重来即可。</p>
-<p>2.切换到目录BlogResources中，使用下面常用的命令来创建自己博文并且发布。</p>
-<p>3.Hexo的常用命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo hexo init:在一个目录中进行hexo的初始化。</span><br><span class="line"></span><br><span class="line">hexo server:启动博客，用该命令来预览一下自己写的博客，可以通过http://localhost:4000进行本地预览查看。</span><br><span class="line"></span><br><span class="line">hexo new &quot;My New Post&quot;:新建一篇文章。</span><br><span class="line"></span><br><span class="line">hexo clean:清理一下</span><br><span class="line"></span><br><span class="line">hexo generate:把我们的文章生成为网页端的文章。</span><br></pre></td></tr></table></figure>
-
-<p>注意：</p>
-<p>1.只有使用vim编辑的时候才进去那个文章的目录进行编辑，即，上面的命令运行都是在建博客的目录下运行的，即BlogResources目录下面运行的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#文章所在目录</span><br><span class="line">/Users/ethan/Documents/BlogResources/source/_posts</span><br></pre></td></tr></table></figure>
-
-<p>2.hexo或者hexo help可以查看hexo支持的所有命令及其功能。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> Usage: hexo &lt;command&gt;</span><br><span class="line"> </span><br><span class="line">Commands:</span><br><span class="line"> clean     Remove generated files and cache.</span><br><span class="line"> config    Get or set configurations.</span><br><span class="line"> deploy    Deploy your website.</span><br><span class="line"> generate  Generate static files.</span><br><span class="line"> help      Get help on a command.</span><br><span class="line"> init      Create a new Hexo folder.</span><br><span class="line"> list      List the information of the site</span><br><span class="line"> migrate   Migrate your site from other system to Hexo.</span><br><span class="line"> new       Create a new post.</span><br><span class="line"> publish   Moves a draft post from _drafts to _posts folder.</span><br><span class="line"> render    Render files with renderer plugins.</span><br><span class="line"> server    Start the server.</span><br><span class="line"> version   Display version information.</span><br><span class="line"> </span><br><span class="line"> Global Options:</span><br><span class="line"> --config  Specify config file instead of using _config.yml</span><br><span class="line"> --cwd     Specify the CWD</span><br><span class="line"> --debug   Display all verbose messages in the terminal</span><br><span class="line"> --draft   Display draft posts</span><br><span class="line"> --safe    Disable all plugins and scripts</span><br><span class="line"> --silent  Hide output on console</span><br></pre></td></tr></table></figure>
-
-<p>3.hexo help [command]可以查看command的更多信息。</p>
-<h2 id="博客部署到Github上"><a href="#博客部署到Github上" class="headerlink" title="博客部署到Github上"></a>博客部署到Github上</h2><p>1.在自己的Github上New Repository，命名标准：oucystong.github.io</p>
-<p>注意：用户部署个人博客的Github仓库的命名必须符合特定要求才行（Github用户名.github.io）。</p>
-<p>2.在命令行中BlogResources目录下操作安装一个部署到Github上的一个插件。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
-
-<p>3.修改_config.yml，修改内容如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #repo是仓库地址</span><br><span class="line">  repo: https://github.com/oucystong/oucystong.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-
-<p>4.在命令行中BlogResources目录下运行如下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#Deploy your website.</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>输入Github的账号和密码，万事大吉，刷新Github的仓库，可以很多推送的内容，这就是Hexo把我们的文章推送到remote产生的文件。</p>
-<p>5.测试是否可以通过一个Github的网址进行访问。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
-
-<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>1.一个比较流行的主题</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/litten/hexo-theme-yilia</span><br></pre></td></tr></table></figure>
-
-<p>2.克隆主题到theme目录下的yilia目录下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git themes/yilia</span><br></pre></td></tr></table></figure>
-
-<p>3.修改_config.yml，修改内容如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br><span class="line">#theme:和主题之间必须要有空格</span><br></pre></td></tr></table></figure>
-
-<p>4.执行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-<p>5.推到remote，执行命令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<h2 id="以后的个人博客地址"><a href="#以后的个人博客地址" class="headerlink" title="以后的个人博客地址"></a>以后的个人博客地址</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
-
-<h2 id="小建议"><a href="#小建议" class="headerlink" title="小建议"></a>小建议</h2><p>注意问题：</p>
-<p>1.所有命令的执行都是基于建立博客的根目录进行，即BlogResources，除非使用vim编辑自己的博文会切换到_post目录下面，所以时常使用pwd查看当前所在的路径。</p>
-<p>2.建议使用root用户权限发布博文，发布博文时使用如下命令切换。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
-
-<p>3.切换到普通用户</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
-
-<p>4.修改博文时的最好办法：切换到root用户，pwd查看当前路径，切换到博文所在路径，使用open document命令将Markdown文件以默认程序打开，比如Typora，可以以所见即所得的方式编辑Markdown文档（使用vim编辑各种配置文件还行，编辑Markdown文件有点浪费时间），编辑完之后在终端以root身份clean、generate、server预览、deploy推送到remote。</p>
-<p>可能遇到的问题：open document，文档被锁定，无法编辑，直接将该文档进行复制出一个副本，对副本进行编辑，将原文件删除（不要用trash命令），将编辑好之后的新文件放入。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL约束</title>
     <url>/2019/11/22/MySQL%E7%BA%A6%E6%9D%9F/</url>
     <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. DQL:查询语句
@@ -867,760 +1546,87 @@ select avg(student.math) from student;
       </tags>
   </entry>
   <entry>
-    <title>MySQL基础</title>
-    <url>/2019/11/22/MySQL%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 数据库的基本概念</span><br><span class="line">2. MySQL数据库软件</span><br><span class="line">   1. 安装</span><br><span class="line">   2. 卸载</span><br><span class="line">   3. 配置</span><br><span class="line">3. SQL</span><br></pre></td></tr></table></figure><a id="more"></a>
+    <title>搭建Hexo静态博客</title>
+    <url>/2019/11/22/%E6%90%AD%E5%BB%BAHexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="下载安装Hexo"><a href="#下载安装Hexo" class="headerlink" title="下载安装Hexo"></a>下载安装Hexo</h2><p>1.去网站下载node.js的LTS（长期支持版）</p><a id="more"></a>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">https://nodejs.org/en/</span><br></pre></td></tr></table></figure>
 
-<h2 id="数据库的基本概念"><a href="#数据库的基本概念" class="headerlink" title="数据库的基本概念"></a>数据库的基本概念</h2><pre><code>1. 数据库的英文单词： DataBase 简称 ： DB
-2. 什么数据库？
-    * 用于存储和管理数据的仓库。Excel？存储+管理
-3. 数据库的特点：
-    1. 持久化存储数据的。其实数据库就是一个文件系统
-    2. 方便存储和管理数据
-    3. 使用了统一的方式操作数据库 -- SQL
-4. 常见的数据库软件
-    * 参见《MySQL基础.pdf》</code></pre><h2 id="MySQL数据库软件"><a href="#MySQL数据库软件" class="headerlink" title="MySQL数据库软件"></a>MySQL数据库软件</h2><pre><code>1. 安装
-    * 参见《MySQL基础.pdf》  默认端口：3306
-2. 卸载
-    1. 去mysql的安装目录找到my.ini文件
-        * 复制 datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
-    2. 卸载MySQL
-    3. 删除C:/ProgramData目录下的MySQL文件夹。
+<p>2.切换root成用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
 
-3. 配置
-    * MySQL服务启动
-        1. 手动（每次都是手动打开Mysql服务）或者自动（开机自动启动）
-        2. cmd--&gt; services.msc 打开服务的窗口
-        3. 使用管理员打开cmd
-            * net start mysql : 启动mysql的服务
-            * net stop mysql:关闭mysql服务
-    * MySQL登录
-        1. mysql -uroot -p密码
-        2. mysql -hip -uroot -p连接目标的密码
-        3. mysql --host=ip --user=root --password=连接目标的密码
-    * MySQL退出
-        1. exit
-        2. quit
-    注意：Mac下载了Mysql之后需要进行环境变量的配置，才可以在命令行中使用Mysql的相关命令。
-    在~/.bash_profile中追加  PATH=$PATH:/usr/local/mysql/bin
-    使其发挥作用：source ~/.bash_profile
+<p>3.查看node和npm的版本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
 
-    * MySQL目录结构
-        1. MySQL安装目录：basedir=&quot;D:/develop/MySQL/&quot;
-            * 配置文件 my.ini
-        2. MySQL数据目录：datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
-            * 几个概念
-                * 数据库：文件夹
-                * 表：文件
-                * 数据：数据
-        3.通过Mac偏好设置中的配置就可以看到上述的内容，在terminal中要会进行查看，善于使用open在finder中展示，datadir普通用户是进不去的，使用sudo su进入到文件夹中。</code></pre><h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><pre><code>1.什么是SQL？
-    Structured Query Language：结构化查询语言
-    其实就是定义了操作所有关系型数据库的规则。每一种数据库操作的方式存在不一样的地方，称为“方言”。
+<p>4.使用npm安装淘宝的cnpm，可使下载速度更快</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line">#查看cnpm版本</span><br><span class="line">cnpm -v</span><br></pre></td></tr></table></figure>
 
-2.SQL通用语法
-    1. SQL 语句可以单行或多行书写，以分号结尾。show databases;
-    2. 可使用空格和缩进来增强语句的可读性。
-    3. MySQL 数据库的 SQL 语句不区分大小写，关键字建议使用大写。
-    4. 3 种注释
-        * 单行注释: -- 注释内容 或 #注释内容(mysql特有) 
-        * 多行注释: /*注释*/
-        * 单行注释中--的方式必须要有空格，其余没说明的情况就是不需要有空格。
+<p>5.安装Hexo</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">cnpm install -g hexo-cli</span><br></pre></td></tr></table></figure>
 
-3. SQL分类
-    1) DDL(Data Definition Language)数据定义语言
-        用来定义数据库对象：数据库，表，列等。关键字：create, drop,alter 等
-    2) DML(Data Manipulation Language)数据操作语言
-        用来对数据库中表的数据进行增删改。关键字：insert, delete, update 等
-    3) DQL(Data Query Language)数据查询语言
-        用来查询数据库中表的记录(数据)。关键字：select, where 等
-    4) DCL(Data Control Language)数据控制语言(了解)
-        用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</code></pre><h3 id="DDL-操作数据库、表"><a href="#DDL-操作数据库、表" class="headerlink" title="DDL:操作数据库、表"></a>DDL:操作数据库、表</h3><pre><code>1. 操作数据库：CRUD
-    1. C(Create):创建
-        * 创建数据库：
-            * create database 数据库名称;
-        * 创建数据库，判断不存在，再创建：
-            * create database if not exists 数据库名称;
-        * 创建数据库，并指定字符集
-            * create database 数据库名称 character set 字符集名;
-        * 练习： 创建db4数据库，判断是否存在，并制定字符集为gbk
-            * create database if not exists db4 character set gbk;
-    2. R(Retrieve)：查询
-        * 查询所有数据库的名称:
-            * show databases;
-            * datadir下面有三个文件夹也就是有三个database，但是为什么我们在终端显示的时候会有四个呢？
-            information_schema：描述mysql数据库的信息的，比如有哪些表？以后要学习视图会用到，并没有实际的物理文件。
-            mysql：核心数据库，存了很多的表
-            performance_schema：对性能提升做操作的数据库，存了很多表
-            sys：随便动，这是一个空的数据库
-            没事别乱动上面的几个数据库的内容。
+<p>6.查看Hexo版本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
 
-        * 查询某个数据库的字符集:查询某个数据库的创建语句
-            * show create database 数据库名称;
-    3. U(Update):修改
-        * 修改数据库的字符集
-            * alter database 数据库名称 character set 字符集名称;
-    4. D(Delete):删除
-        * 删除数据库
-            * drop database 数据库名称;
-        * 判断数据库存在，存在再删除
-            * drop database if exists 数据库名称;
-    5. 使用数据库
-        * 查询当前正在使用的数据库名称
-            * select database();
-        * 使用数据库
-            * use 数据库名称;
+<h2 id="使用Hexo"><a href="#使用Hexo" class="headerlink" title="使用Hexo"></a>使用Hexo</h2><p>1.建立写博客的目录BlogResources，所有的内容都在此目录中，如果过程中遇到了什么错误，直接删除Hexo目录删除重来即可。</p>
+<p>2.切换到目录BlogResources中，使用下面常用的命令来创建自己博文并且发布。</p>
+<p>3.Hexo的常用命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo hexo init:在一个目录中进行hexo的初始化。</span><br><span class="line"></span><br><span class="line">hexo server:启动博客，用该命令来预览一下自己写的博客，可以通过http://localhost:4000进行本地预览查看。</span><br><span class="line"></span><br><span class="line">hexo new &quot;My New Post&quot;:新建一篇文章。</span><br><span class="line"></span><br><span class="line">hexo clean:清理一下</span><br><span class="line"></span><br><span class="line">hexo generate:把我们的文章生成为网页端的文章。</span><br></pre></td></tr></table></figure>
 
+<p>注意：</p>
+<p>1.只有使用vim编辑的时候才进去那个文章的目录进行编辑，即，上面的命令运行都是在建博客的目录下运行的，即BlogResources目录下面运行的。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#文章所在目录</span><br><span class="line">/Users/ethan/Documents/BlogResources/source/_posts</span><br></pre></td></tr></table></figure>
 
-2. 操作表
-    1. C(Create):创建
-        1. 语法：
-            create table 表名(
-                列名1 数据类型1,
-                列名2 数据类型2,
-                ....
-                列名n 数据类型n
-            );
-            * 注意：最后一列，不需要加逗号（,）
-            * 数据库类型：
-                1. int：整数类型
-                    * age int,
-                2. double:小数类型
-                    * score double(5,2)
-                3. date:日期，只包含年月日，yyyy-MM-dd
-                4. datetime:日期，包含年月日时分秒     yyyy-MM-dd HH:mm:ss
-                5. timestamp:时间戳类型    包含年月日时分秒     yyyy-MM-dd HH:mm:ss    
-                    * 如果将来不给这个字段赋值，或赋值为null，则默认使用当前的系统时间，来自动赋值
+<p>2.hexo或者hexo help可以查看hexo支持的所有命令及其功能。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> Usage: hexo &lt;command&gt;</span><br><span class="line"> </span><br><span class="line">Commands:</span><br><span class="line"> clean     Remove generated files and cache.</span><br><span class="line"> config    Get or set configurations.</span><br><span class="line"> deploy    Deploy your website.</span><br><span class="line"> generate  Generate static files.</span><br><span class="line"> help      Get help on a command.</span><br><span class="line"> init      Create a new Hexo folder.</span><br><span class="line"> list      List the information of the site</span><br><span class="line"> migrate   Migrate your site from other system to Hexo.</span><br><span class="line"> new       Create a new post.</span><br><span class="line"> publish   Moves a draft post from _drafts to _posts folder.</span><br><span class="line"> render    Render files with renderer plugins.</span><br><span class="line"> server    Start the server.</span><br><span class="line"> version   Display version information.</span><br><span class="line"> </span><br><span class="line"> Global Options:</span><br><span class="line"> --config  Specify config file instead of using _config.yml</span><br><span class="line"> --cwd     Specify the CWD</span><br><span class="line"> --debug   Display all verbose messages in the terminal</span><br><span class="line"> --draft   Display draft posts</span><br><span class="line"> --safe    Disable all plugins and scripts</span><br><span class="line"> --silent  Hide output on console</span><br></pre></td></tr></table></figure>
 
-                6. varchar：字符串
-                    * name varchar(20):姓名最大20个字符
-                    * zhangsan 8个字符  张三 2个字符
+<p>3.hexo help [command]可以查看command的更多信息。</p>
+<h2 id="博客部署到Github上"><a href="#博客部署到Github上" class="headerlink" title="博客部署到Github上"></a>博客部署到Github上</h2><p>1.在自己的Github上New Repository，命名标准：oucystong.github.io</p>
+<p>注意：用户部署个人博客的Github仓库的命名必须符合特定要求才行（Github用户名.github.io）。</p>
+<p>2.在命令行中BlogResources目录下操作安装一个部署到Github上的一个插件。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
 
+<p>3.修改_config.yml，修改内容如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #repo是仓库地址</span><br><span class="line">  repo: https://github.com/oucystong/oucystong.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
 
-        * 创建表
-            create table student(
-                id int,
-                name varchar(32),
-                age int ,
-                score double(4,1),
-                birthday date,
-                insert_time timestamp
-            );
-        * 复制表：
-            * create table 表名 like 被复制的表名;          
-    2. R(Retrieve)：查询
-        * 查询某个数据库中所有的表名称
-            * show tables;
-        * 查询表结构
-            * desc 表名;  description
-    3. U(Update):修改
-        1. 修改表名
-            alter table 表名 rename to 新的表名;
-        2. 修改表的字符集
-            alter table 表名 character set 字符集名称;
-        3. 添加一列
-            alter table 表名 add 列名 数据类型;
-        4. 修改列名称 类型
-            alter table 表名 change 列名 新列别 新数据类型;//改列名和类型
-            alter table 表名 modify 列名 新数据类型;//只改类型
-        5. 删除列
-            alter table 表名 drop 列名;
-    4. D(Delete):删除
-        * drop table 表名;
-        * drop table  if exists 表名 ;</code></pre><ul>
-<li>客户端图形化工具：SQLYog</li>
-<li>Mac端有哪些好用的数据库客户端软件？Workbench这是Mysql官方的数据库客户端。DataGrip是jetbrain大厂的数据库客户端，很好用。</li>
-</ul>
-<h3 id="DML：增删改表中数据"><a href="#DML：增删改表中数据" class="headerlink" title="DML：增删改表中数据"></a>DML：增删改表中数据</h3><pre><code>1. 添加数据：
-    * 语法：
-        * insert into 表名(列名1,列名2,...列名n) values(值1,值2,...值n);
-    * 注意：
-        1. 列名和值要一一对应。
-        2. 如果表名后，不定义列名，则默认给所有列添加值
-            insert into 表名 values(值1,值2,...值n);
-        3. 除了数字类型，其他类型需要使用引号(单双都可以)引起来
-2. 删除数据：
-    * 语法：
-        * delete from 表名 [where 条件]
-    * 注意：
-        1. 如果不加条件，则删除表中所有记录。
-        2. 如果要删除所有记录
-            1. delete from 表名; -- 不推荐使用。有多少条记录就会执行多少次删除操作
-            2. TRUNCATE TABLE 表名; -- 推荐使用，效率更高 先删除表，然后再创建一张一样的表。
-3. 修改数据：
-    * 语法：
-        * update 表名 set 列名1 = 值1, 列名2 = 值2,... [where 条件];
+<p>4.在命令行中BlogResources目录下运行如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#Deploy your website.</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
 
-    * 注意：
-        1. 如果不加任何条件，则会将表中所有记录全部修改。</code></pre><h3 id="DQL：查询表中的记录"><a href="#DQL：查询表中的记录" class="headerlink" title="DQL：查询表中的记录"></a>DQL：查询表中的记录</h3><pre><code>* select * from 表名;
+<p>输入Github的账号和密码，万事大吉，刷新Github的仓库，可以很多推送的内容，这就是Hexo把我们的文章推送到remote产生的文件。</p>
+<p>5.测试是否可以通过一个Github的网址进行访问。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
 
-1. 语法：
-    select
-        字段列表  多个字段逗号分隔
-    from
-        表名列表  多个表名逗号分隔
-    where
-        条件列表
-    group by
-        分组字段  分组（男生组和女生组）
-    having
-        分组之后的条件
-    order by
-        排序   升序和降序
-    limit
-        分页限定
+<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>1.一个比较流行的主题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/litten/hexo-theme-yilia</span><br></pre></td></tr></table></figure>
 
+<p>2.克隆主题到theme目录下的yilia目录下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git themes/yilia</span><br></pre></td></tr></table></figure>
 
-2. 基础查询
-    1. 多个字段的查询
-        select 字段名1，字段名2... from 表名；
-        * 注意：
-            * 如果查询所有字段，则可以使用*来替代字段列表。
-    2. 去除重复：
-        * distinct
-        保证结果集中的两条记录完全一样才可以去重。
-    3. 计算列
-        * 一般可以使用四则运算计算一些列的值。（一般只会进行数值型的计算）
-        * ifnull(表达式1,表达式2)：null参与的运算，计算结果都为null
-            * 表达式1：哪个字段需要判断是否为null
-            * 如果该字段为null后的替换值。
-    4. 起别名：
-        * as：as也可以省略，用一个或者多个空格代替
+<p>3.修改_config.yml，修改内容如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br><span class="line">#theme:和主题之间必须要有空格</span><br></pre></td></tr></table></figure>
 
-示例代码：
--- 查询姓名和年龄
-select student.name,student.age from student;
--- 查询地址
-select student.address from student;
--- 去除重复
-select distinct student.address from student;
--- 保证结果集中的两条记录完全一样才可以去重。
-select distinct student.name,student.address from student;
--- 四则运算
-select student.name,student.math,student.english,student.math+student.english from student;
--- 四则运算定义别名
-select student.name as 名字,student.math as 数学,student.english as 英语 from student;
--- ifnull函数的使用
-select student.name,student.math,student.english,student.math+ifnull(student.english,0) as 总分 from student;
+<p>4.执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
 
+<p>5.推到remote，执行命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
 
-3. 条件查询
-    1. where子句后跟条件
-    2. 运算符
-        * &gt; 、&lt; 、&lt;= 、&gt;= 、= 、&lt;&gt;或者!=
-        * BETWEEN...AND  包含两边的值
-        * IN(集合) 
-        * LIKE：模糊查询
-            * 占位符：
-                * _:单个任意字符
-                * %:多个任意字符（包括零个字符）
-                * 在某些特殊的情况下，查询的条件丽需要使用下划线或者百分号，不希望sql把下划线和百分号当成通配符使用，这就需要使用到转义字符，mysql使用反斜杠\作为转义字符。标准sql语句并没有提供反斜杠\的转义字符，而是使用escape关键字显示进行转义。
--- 标准sql中选出名字以下划线开头的学生
-select * from student where student.name like &apos;\_%&apos; escape &apos;\&apos;;
-        * IS NULL    IS NOT NULL  NULL值不能使用=或者!=来进行判断，只能通过IS NULL或者IS NOT NULL
-        * and  或 &amp;&amp; 推荐使用英文的
-        * or  或 || 推荐使用英文的
-        * not  或 !  推荐使用英文的
+<h2 id="以后的个人博客地址"><a href="#以后的个人博客地址" class="headerlink" title="以后的个人博客地址"></a>以后的个人博客地址</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
 
-            -- 查询年龄大于20岁
+<h2 id="小建议"><a href="#小建议" class="headerlink" title="小建议"></a>小建议</h2><p>注意问题：</p>
+<p>1.所有命令的执行都是基于建立博客的根目录进行，即BlogResources，除非使用vim编辑自己的博文会切换到_post目录下面，所以时常使用pwd查看当前所在的路径。</p>
+<p>2.建议使用root用户权限发布博文，发布博文时使用如下命令切换。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
 
-            SELECT * FROM student WHERE age &gt; 20;
+<p>3.切换到普通用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
 
-            SELECT * FROM student WHERE age &gt;= 20;
-
-            -- 查询年龄等于20岁
-            SELECT * FROM student WHERE age = 20;
-
-            -- 查询年龄不等于20岁
-            SELECT * FROM student WHERE age != 20;
-            SELECT * FROM student WHERE age &lt;&gt; 20;
-
-            -- 查询年龄大于等于20 小于等于30
-
-            SELECT * FROM student WHERE age &gt;= 20 &amp;&amp;  age &lt;=30;
-            SELECT * FROM student WHERE age &gt;= 20 AND  age &lt;=30;
-            SELECT * FROM student WHERE age BETWEEN 20 AND 30;
-
-            -- 查询年龄22岁，18岁，25岁的信息
-            SELECT * FROM student WHERE age = 22 OR age = 18 OR age = 25;
-            SELECT * FROM student WHERE age IN (22,18,25);
-
-            -- 查询英语成绩为null
-            SELECT * FROM student WHERE english = NULL; -- 不对的。null值不能使用 = （!=） 判断
-
-            SELECT * FROM student WHERE english IS NULL;
-
-            -- 查询英语成绩不为null
-            SELECT * FROM student WHERE english  IS NOT NULL;
-            -- 查询姓马的有哪些？ like
-            SELECT * FROM student WHERE NAME LIKE &apos;马%&apos;;
-            -- 查询姓名第二个字是化的人
-            SELECT * FROM student WHERE NAME LIKE &quot;_化%&quot;;
-            -- 查询姓名是3个字的人
-            SELECT * FROM student WHERE NAME LIKE &apos;___&apos;;
-            -- 查询姓名中包含德的人
-      SELECT * FROM student WHERE NAME LIKE &apos;%德%&apos;;</code></pre><p>​                </p>
-<p>​    </p>
+<p>4.修改博文时的最好办法：切换到root用户，pwd查看当前路径，切换到博文所在路径，使用open document命令将Markdown文件以默认程序打开，比如Typora，可以以所见即所得的方式编辑Markdown文档（使用vim编辑各种配置文件还行，编辑Markdown文件有点浪费时间），编辑完之后在终端以root身份clean、generate、server预览、deploy推送到remote。</p>
+<p>可能遇到的问题：open document，文档被锁定，无法编辑，直接将该文档进行复制出一个副本，对副本进行编辑，将原文件删除（不要用trash命令），将编辑好之后的新文件放入。</p>
 ]]></content>
       <categories>
-        <category>SQL</category>
+        <category>Hexo</category>
       </categories>
       <tags>
-        <tag>Mysql</tag>
+        <tag>Hexo</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>JDBC课堂笔记</title>
-    <url>/2018/05/09/JDBC%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. JDBC基本概念
-2. 快速入门
-3. 对JDBC中各个接口和类详解</code></pre><a id="more"></a><h2 id="JDBC："><a href="#JDBC：" class="headerlink" title="JDBC："></a>JDBC：</h2><pre><code>1. 概念：Java DataBase Connectivity  Java 数据库连接， Java语言操作数据库
-    * JDBC本质：其实是官方（sun公司）定义的一套操作所有关系型数据库的规则，即接口。各个数据库厂商去实现这套接口，提供数据库驱动jar包。我们可以使用这套接口（JDBC）编程，真正执行的代码是驱动jar包中的实现类。
-
-例如：
-Person接口    Worker实现类（实现了Person接口）   Person p=new Worker();   p.eat();
-
-2. 快速入门：
-    * 步骤：
-        1. 导入驱动jar包 mysql-connector-java-5.1.37-bin.jar--里面有驱动的java源代码和class文件，只需要倒入class文件的jar包即可。
-            1.复制mysql-connector-java-5.1.37-bin.jar到项目的libs目录下--libs目录建在module下面，和src是同级目录。
-            2.右键--&gt;Add As Library
-        2. 注册驱动
-        3. 获取数据库连接对象 Connection
-        4. 定义sql
-        5. 获取执行sql语句的对象 Statement
-        6. 执行sql，接受返回结果
-        7. 处理结果
-        8. 释放资源
-
-    * 代码实现：
-          //1. 导入驱动jar包
-        //2.注册驱动
-        Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
-        //3.获取数据库连接对象
-        Connection conn = DriverManager.getConnection(&quot;jdbc:mysql://localhost:3306/db3&quot;, &quot;root&quot;, &quot;root&quot;);
-        //4.定义sql语句
-        String sql = &quot;update account set balance = 500 where id = 1&quot;;
-        //5.获取执行sql的对象 Statement
-        Statement stmt = conn.createStatement();
-        //6.执行sql
-        int count = stmt.executeUpdate(sql);
-        //7.处理结果
-        System.out.println(count);
-        //8.释放资源
-        stmt.close();
-        conn.close();
-
-3. 详解各个对象：
-    1. DriverManager：驱动管理对象
-        * 功能：
-            1. 注册驱动：告诉程序该使用哪一个数据库驱动jar
-                static void registerDriver(Driver driver) :注册与给定的驱动程序 DriverManager 。 
-                写代码使用：  Class.forName(&quot;com.mysql.jdbc.Driver&quot;);//把该全类名的class文件加载进内存，有一些代码被自动执行，这一部分代码放在静态代码块中。
-                通过查看源码发现：在com.mysql.jdbc.Driver类中存在静态代码块
-                 static {
-                        try {
-                            java.sql.DriverManager.registerDriver(new Driver());
-                        } catch (SQLException E) {
-                            throw new RuntimeException(&quot;Can&apos;t register driver!&quot;);
-                        }
-                    }
-
-                注意：mysql5之后的驱动jar包可以省略注册驱动的步骤。
-                mysql-connector-java-5.1.37-bin/METAINF/services/java.sql.Driver
-            2. 获取数据库连接：
-                * 方法：static Connection getConnection(String url, String user, String password) 
-                * 参数：
-                    * url：指定连接的路径
-                        * 语法：jdbc:mysql://ip地址(域名):端口号/数据库名称
-                        * 例子：jdbc:mysql://localhost:3306/db3
-                        * 细节：如果连接的是本机mysql服务器，并且mysql服务默认端口是3306，则url可以简写为：jdbc:mysql:///数据库名称
-                    * user：用户名
-                    * password：密码 
-                * 查看mysql在本机上的端口：
-                    * 登陆mysql，执行show global variables like &apos;port&apos;;
-    2. Connection：数据库连接对象
-        1. 功能：
-            1. 获取执行sql 的对象
-                * Statement createStatement()
-                * PreparedStatement prepareStatement(String sql)  
-            2. 管理事务：
-                * 开启事务：setAutoCommit(boolean autoCommit) ：调用该方法设置参数为false，即开启事务
-                * 提交事务：commit() 
-                * 回滚事务：rollback() 
-    3. Statement：执行sql的对象
-        1. 执行sql
-            1. boolean execute(String sql) ：可以执行任意的sql 了解 
-            2. int executeUpdate(String sql) ：执行DML（insert、update、delete）语句、DDL(create，alter、drop)语句
-                * 返回值：影响的行数，可以通过这个影响的行数判断DML语句是否执行成功 返回值&gt;0的则执行成功，反之，则失败。
-            3. ResultSet executeQuery(String sql)  ：执行DQL（select)语句
-        2. 练习：
-            1. account表 添加一条记录
-            2. account表 修改记录
-            3. account表 删除一条记录
-
-            代码：
-                Statement stmt = null;
-                Connection conn = null;
-                try {
-                    //1. 注册驱动
-                    Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
-                    //2. 定义sql
-                    String sql = &quot;insert into account values(null,&apos;王五&apos;,3000)&quot;;
-                    //3.获取Connection对象
-                    conn = DriverManager.getConnection(&quot;jdbc:mysql:///db3&quot;, &quot;root&quot;, &quot;root&quot;);
-                    //4.获取执行sql的对象 Statement
-                    stmt = conn.createStatement();
-                    //5.执行sql
-                    int count = stmt.executeUpdate(sql);//影响的行数
-                    //6.处理结果
-                    System.out.println(count);
-                    if(count &gt; 0){
-                        System.out.println(&quot;添加成功！&quot;);
-                    }else{
-                        System.out.println(&quot;添加失败！&quot;);
-                    }
-
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }finally {
-                    //stmt.close();
-                    //7. 释放资源
-                    //避免空指针异常
-                    if(stmt != null){
-                        try {
-                            stmt.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if(conn != null){
-                        try {
-                            conn.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-    4. ResultSet：结果集对象,封装查询结果
-        * boolean next(): 游标向下移动一行，判断当前行是否是最后一行末尾(是否有数据)，如果是，则返回false，如果不是则返回true
-        * getXxx(参数):获取数据
-            * Xxx：代表数据类型   如： int getInt() ,    String getString()
-            * 参数：
-                1. int：代表列的编号,从1开始   如： getString(1)
-                2. String：代表列名称。 如： getDouble(&quot;balance&quot;)
-
-        * 注意：
-            * 使用步骤：
-                1. 游标向下移动一行
-                2. 判断是否有数据
-                3. 获取数据
-
-               //循环判断游标是否是最后一行末尾。
-                while(rs.next()){
-                    //获取数据
-                    //6.2 获取数据
-                    int id = rs.getInt(1);
-                    String name = rs.getString(&quot;name&quot;);
-                    double balance = rs.getDouble(3);
-
-                    System.out.println(id + &quot;---&quot; + name + &quot;---&quot; + balance);
-                }
-
-        * 练习：
-            * 定义一个方法，查询emp表的数据将其封装为对象，然后装载集合，返回。
-                1. 定义Emp类
-                2. 定义方法 public List&lt;Emp&gt; findAll(){}
-                3. 实现方法 select * from emp;
-                提示1：遍历获取数据、创建emp对象并且赋值、装载集合、
-                提示2：最后申请的资源最先释放
-                提示3：封装对象使用List集合
-                提示4：循环中如果每次都new一个对象的话，就会浪费堆内存的空间，可以在循环外面new一个对象，在循环里面使用这个对象，实现对象的复用，使用完之后将这个对象复原为一个新对象以便于下次循环使用这个对象的时候确定这是一个新对象。
-    5. PreparedStatement：执行sql的对象    extend Statement
-        1. SQL注入问题：在拼接sql时，有一些sql的特殊关键字参与字符串的拼接。会造成安全性问题
-            1. 输入用户随便，输入密码：a&apos; or &apos;a&apos; = &apos;a
-            2. sql：select * from user where username = &apos;fhdsjkf&apos; and password = &apos;a&apos; or &apos;a&apos; = &apos;a&apos; 
-
-        2. 解决sql注入问题：使用PreparedStatement对象来解决
-        3. 预编译的SQL（动态sql）：参数使用?作为占位符
-        4. 步骤：
-            1. 导入驱动jar包 mysql-connector-java-5.1.37-bin.jar
-            2. 注册驱动
-            3. 获取数据库连接对象 Connection
-            4. 定义sql
-                * 注意：sql的参数使用？作为占位符。 如：select * from user where username = ? and password = ?;
-            5. 获取执行sql语句的对象 PreparedStatement  Connection.prepareStatement(String sql) 
-            6. 给？赋值：
-                * 方法： setXxx(参数1,参数2)
-                    * 参数1：？的位置编号 从1 开始
-                    * 参数2：？的值
-                    * 具体的使用查看API文档
-            7. 执行sql，接受返回结果，不需要传递sql语句
-            8. 处理结果
-            9. 释放资源
-
-        5. 注意：后期都会使用PreparedStatement来完成增删改查的所有操作
-            1. 可以防止SQL注入
-            2. 效率更高
-            3. 我们通常使用JDBC来进行表中数据的增删改查，即操作DML和DQL语句，对于DDL通常是设计好数据库和表之后供我们进行操作的，对于DCL更加用不到我们去操作了，通常是由DBA去操作，作为Java开发人员对于这部分的内容了解即可。
-            4. 预编译sql就是执行动态sql，动态sql不会产生sql注入的问题，但是静态sql（字符串拼接的sql语句）很容易出现sql注入的问题。</code></pre><h2 id="抽取JDBC工具类-：-JDBCUtils"><a href="#抽取JDBC工具类-：-JDBCUtils" class="headerlink" title="抽取JDBC工具类 ： JDBCUtils"></a>抽取JDBC工具类 ： JDBCUtils</h2><pre><code>* 目的：简化书写
-* 提示：各种工具类一般是为了方便进行调用都使用static进行修饰，即通常定义静态方法。
-* 分析：
-    1. 注册驱动也抽取
-    2. 抽取一个方法获取连接对象
-        * 需求：不想传递参数（麻烦），还得保证工具类的通用性。
-        * 解决：配置文件  开发中很常用的方法
-            jdbc.properties
-                url=
-                user=
-                password=
-                driver=
-    3. 抽取一个方法释放资源
-
-
-* 代码实现：
-    public class JDBCUtils {
-    private static String url;
-    private static String user;
-    private static String password;
-    private static String driver;
-    /**
-     * 文件的读取，只需要读取一次即可拿到这些值。使用静态代码块
-     * 静态代码块会随着类的加载而执行，并且只会执行一次。
-     */
-    static{
-        //读取资源文件，获取值。
-
-        try {
-            //1. 创建Properties集合类。
-            Properties pro = new Properties();
-
-            //获取src路径下的文件的方式---&gt;ClassLoader 类加载器
-            ClassLoader classLoader = JDBCUtils.class.getClassLoader();
-            URL res  = classLoader.getResource(&quot;jdbc.properties&quot;);
-            String path = res.getPath();
-            System.out.println(path);///D:/IdeaProjects/itcast/out/production/day04_jdbc/jdbc.properties
-            //2. 加载文件
-           // pro.load(new FileReader(&quot;D:\\IdeaProjects\\itcast\\day04_jdbc\\src\\jdbc.properties&quot;));
-            pro.load(new FileReader(path));
-
-            //3. 获取数据，赋值
-            url = pro.getProperty(&quot;url&quot;);
-            user = pro.getProperty(&quot;user&quot;);
-            password = pro.getProperty(&quot;password&quot;);
-            driver = pro.getProperty(&quot;driver&quot;);
-            //4. 注册驱动
-            Class.forName(driver);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-    /**
-         * 获取连接
-         * @return 连接对象
-         */
-      public static Connection getConnection() throws SQLException {
-          return DriverManager.getConnection(url, user, password);
-      }
-
-    /**
-     * 释放资源
-     * @param stmt
-     * @param conn
-     */
-    public static void close(Statement stmt,Connection conn){
-        if( stmt != null){
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if( conn != null){
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-        /**
-         * 释放资源-- 重载
-         * @param stmt
-         * @param conn
-         */
-        public static void close(ResultSet rs,Statement stmt, Connection conn){
-            if( rs != null){
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if( stmt != null){
-                try {
-                    stmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if( conn != null){
-              try {
-                  conn.close();
-              } catch (SQLException e) {
-                  e.printStackTrace();
-              }
-          }
-    }
-    }
-
-* 练习：
-    * 需求：
-        1. 通过键盘录入用户名和密码
-        2. 判断用户是否登录成功
-            * select * from user where username = &quot;&quot; and password = &quot;&quot;;
-            * 如果这个sql有查询结果，则成功，反之，则失败
-
-    * 步骤：
-        1. 创建数据库表 user
-            CREATE TABLE USER(
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                username VARCHAR(32),
-                PASSWORD VARCHAR(32)
-
-            );
-
-            INSERT INTO USER VALUES(NULL,&apos;zhangsan&apos;,&apos;123&apos;);
-            INSERT INTO USER VALUES(NULL,&apos;lisi&apos;,&apos;234&apos;);
-
-        2. 代码实现：
-            public class JDBCDemo9 {
-
-                public static void main(String[] args) {
-                    //1.键盘录入，接受用户名和密码
-                    Scanner sc = new Scanner(System.in);
-                    System.out.println(&quot;请输入用户名：&quot;);
-                    String username = sc.nextLine();
-                    System.out.println(&quot;请输入密码：&quot;);
-                    String password = sc.nextLine();
-                    //2.调用方法
-                    boolean flag = new JDBCDemo9().login(username, password);
-                    //3.判断结果，输出不同语句
-                    if(flag){
-                        //登录成功
-                        System.out.println(&quot;登录成功！&quot;);
-                    }else{
-                        System.out.println(&quot;用户名或密码错误！&quot;);
-                    }            
-          }
-                    /**
-                     * 登录方法
-                     */
-                    public boolean login(String username ,String password){
-                        if(username == null || password == null){
-                            return false;
-                        }
-                        //连接数据库判断是否登录成功
-                        Connection conn = null;
-                        Statement stmt =  null;
-                        ResultSet rs = null;
-                        //1.获取连接
-                        try {
-                            conn =  JDBCUtils.getConnection();
-                            //2.定义sql
-                            String sql = &quot;select * from user where username = &apos;&quot;+username+&quot;&apos; and password = &apos;&quot;+password+&quot;&apos; &quot;;
-                            //3.获取执行sql的对象
-                            stmt = conn.createStatement();
-                            //4.执行查询
-                            rs = stmt.executeQuery(sql);
-                            //5.判断
-                           /* if(rs.next()){//如果有下一行，则返回true
-                                return true;
-                            }else{
-                                return false;
-                            }*/
-                           return rs.next();//如果有下一行，则返回true
-
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }finally {
-                            JDBCUtils.close(rs,stmt,conn);
-                        }
-                        return false;
-                    }
-                }</code></pre><h2 id="JDBC控制事务："><a href="#JDBC控制事务：" class="headerlink" title="JDBC控制事务："></a>JDBC控制事务：</h2><pre><code>1. 事务：一个包含多个步骤的业务操作。如果这个业务操作被事务管理，则这多个步骤要么同时成功，要么同时失败。
-2. 操作：
-    1. 开启事务
-    2. 提交事务
-    3. 回滚事务
-3. 使用Connection对象来管理事务
-    * 开启事务：setAutoCommit(boolean autoCommit) ：调用该方法设置参数为false，即开启事务
-        * 在执行sql之前开启事务
-    * 提交事务：commit() 
-        * 当所有sql都执行完提交事务
-    * 回滚事务：rollback() 
-        * 在catch中回滚事务
-
-4. 代码：
-    public class JDBCDemo10 {
-
-        public static void main(String[] args) {
-            Connection conn = null;
-            PreparedStatement pstmt1 = null;
-            PreparedStatement pstmt2 = null;
-
-            try {
-                //1.获取连接
-                conn = JDBCUtils.getConnection();
-                //开启事务
-                conn.setAutoCommit(false);
-
-                //2.定义sql
-                //2.1 张三 - 500
-                String sql1 = &quot;update account set balance = balance - ? where id = ?&quot;;
-                //2.2 李四 + 500
-                String sql2 = &quot;update account set balance = balance + ? where id = ?&quot;;
-                //3.获取执行sql对象
-                pstmt1 = conn.prepareStatement(sql1);
-                pstmt2 = conn.prepareStatement(sql2);
-                //4. 设置参数
-                pstmt1.setDouble(1,500);
-                pstmt1.setInt(2,1);
-
-                pstmt2.setDouble(1,500);
-                pstmt2.setInt(2,2);
-                //5.执行sql
-                pstmt1.executeUpdate();
-                // 手动制造异常
-                int i = 3/0;
-
-                pstmt2.executeUpdate();
-                //提交事务
-                conn.commit();
-            } catch (Exception e) {
-                //事务回滚
-                try {
-                    if(conn != null) {
-                        conn.rollback();
-                    }
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-            }finally {
-                JDBCUtils.close(pstmt1,conn);
-                JDBCUtils.close(pstmt2,null);
-            }         
-            }        
-        }</code></pre><p>​            </p>
-]]></content>
   </entry>
 </search>
