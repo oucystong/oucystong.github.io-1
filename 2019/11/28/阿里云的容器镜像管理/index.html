@@ -52,17 +52,18 @@
   };
 </script>
 
-  <meta name="description" content="Wechat:17862989229 Email:buaatys@163.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Tags">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;tags&#x2F;index.html">
+  <meta name="description" content="1. 登录阿里云Docker Registry">
+<meta name="keywords" content="Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云的容器镜像管理">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;28&#x2F;%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86&#x2F;index.html">
 <meta property="og:site_name" content="oucystong&#39;s blog">
-<meta property="og:description" content="Wechat:17862989229 Email:buaatys@163.com">
+<meta property="og:description" content="1. 登录阿里云Docker Registry">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-22T07:35:34.371Z">
+<meta property="og:updated_time" content="2019-11-30T07:06:53.530Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/tags/">
+<link rel="canonical" href="http://yoursite.com/2019/11/28/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86/">
 
 
 <script id="page-configurations">
@@ -70,14 +71,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
-    isPage: true,
+    isPost: true,
+    isPage: false,
     isArchive: false
   };
 </script>
 
-  <title>Tags | oucystong's blog
-  </title>
+  <title>阿里云的容器镜像管理 | oucystong's blog</title>
   
 
 
@@ -213,52 +213,127 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
           <div class="content">
             
 
   <div class="posts-expand">
-    
-    
-    
-    <div class="post-block" lang="en">
-      <header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">Tags
-</h1>
-
-<div class="post-meta">
+      
   
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/28/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86/">
 
-</div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/touxiang.png">
+      <meta itemprop="name" content="oucystong">
+      <meta itemprop="description" content="Wechat:17862989229 Email:buaatys@163.com">
+    </span>
 
-</header>
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="oucystong's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里云的容器镜像管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-11-28 00:00:00" itemprop="dateCreated datePublished" datetime="2019-11-28T00:00:00+08:00">2019-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-30 15:06:53" itemprop="dateModified" datetime="2019-11-30T15:06:53+08:00">2019-11-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index">
+                    <span itemprop="name">Docker</span>
+                  </a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-      
-      
-      <div class="post-body">
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
-              5 tags in total
+        <h2 id="1-登录阿里云Docker-Registry"><a href="#1-登录阿里云Docker-Registry" class="headerlink" title="1. 登录阿里云Docker Registry"></a>1. 登录阿里云Docker Registry</h2><a id="more"></a><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker login --username=ethan_oucystong registry.cn-shenzhen.aliyuncs.com</span><br></pre></td></tr></table></figure>
+
+<p>用于登录的用户名为阿里云账号全名，密码为开通服务时设置的密码。</p>
+<p>您可以在访问凭证页面修改凭证密码。</p>
+<h2 id="2-从Registry中拉取镜像"><a href="#2-从Registry中拉取镜像" class="headerlink" title="2. 从Registry中拉取镜像"></a>2. 从Registry中拉取镜像</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker pull registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-将镜像推送到Registry"><a href="#3-将镜像推送到Registry" class="headerlink" title="3. 将镜像推送到Registry"></a>3. 将镜像推送到Registry</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker login --username=ethan_oucystong registry.cn-shenzhen.aliyuncs.com</span><br><span class="line">$ sudo docker tag [ImageId] registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br><span class="line">$ sudo docker push registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br></pre></td></tr></table></figure>
+
+<p>请根据实际镜像信息替换示例中的[ImageId]和[镜像版本号]参数。</p>
+<h2 id="4-选择合适的镜像仓库地址"><a href="#4-选择合适的镜像仓库地址" class="headerlink" title="4. 选择合适的镜像仓库地址"></a>4. 选择合适的镜像仓库地址</h2><p>从ECS推送镜像时，可以选择使用镜像仓库内网地址。推送速度将得到提升并且将不会损耗您的公网流量。</p>
+<p>如果您使用的机器位于VPC网络，请使用 registry-vpc.cn-shenzhen.aliyuncs.com 作为Registry的域名登录，并作为镜像命名空间前缀。</p>
+<h2 id="5-示例"><a href="#5-示例" class="headerlink" title="5. 示例"></a>5. 示例</h2><p>使用”docker tag”命令重命名镜像，并将它通过专有网络地址推送至Registry。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker images</span><br><span class="line">REPOSITORY                                                         TAG                 IMAGE ID            CREATED             VIRTUAL SIZE</span><br><span class="line">registry.aliyuncs.com/acs/agent                                    0.7-dfb6816         37bb9c63c8b2        7 days ago          37.89 MB</span><br><span class="line">$ sudo docker tag 37bb9c63c8b2 registry-vpc.cn-shenzhen.aliyuncs.com/acs/agent:0.7-dfb6816</span><br></pre></td></tr></table></figure>
+
+<p>使用”docker images”命令找到镜像，将该镜像名称中的域名部分变更为Registry专有网络地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker push registry-vpc.cn-shenzhen.aliyuncs.com/acs/agent:0.7-dfb6816</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-注意问题"><a href="#6-注意问题" class="headerlink" title="6. 注意问题"></a>6. 注意问题</h2><ul>
+<li>仓库名必须与阿里云所在仓库名相匹配</li>
+<li>非docker-hub的镜像仓库，名称空间前需要指明服务器地址，及这里的registry.cn-shenzhen.aliyuncs.com</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/11/25/JDBC%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/" rel="next" title="JDBC课堂笔记">
+                  <i class="fa fa-chevron-left"></i> JDBC课堂笔记
+                </a>
             </div>
-            <div class="tag-cloud-tags">
-              <a href="/tags/Docker/" style="font-size: 21px; color: #6f6f6f">Docker</a> <a href="/tags/Hexo/" style="font-size: 12px; color: #ccc">Hexo</a> <a href="/tags/JDBC/" style="font-size: 12px; color: #ccc">JDBC</a> <a href="/tags/JDBC%E8%BF%9E%E6%8E%A5%E6%B1%A0JDBCTemplate/" style="font-size: 12px; color: #ccc">JDBC连接池JDBCTemplate</a> <a href="/tags/Mysql/" style="font-size: 30px; color: #111">Mysql</a>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+                <a href="/2019/11/28/%E9%80%9A%E8%BF%87%E9%98%BF%E9%87%8C%E4%BA%91%E5%AE%89%E8%A3%85%E5%8F%8A%E9%85%8D%E7%BD%AEDocker/" rel="prev" title="通过阿里云安装及配置Docker">
+                  通过阿里云安装及配置Docker <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
-        
-      </div>
-      
-      
-      
-    </div>
+      </footer>
     
+  </article>
+  
+  
+  
 
-    
-    
-    
   </div>
 
 
@@ -288,6 +363,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-登录阿里云Docker-Registry"><span class="nav-number">1.</span> <span class="nav-text">1. 登录阿里云Docker Registry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-从Registry中拉取镜像"><span class="nav-number">2.</span> <span class="nav-text">2. 从Registry中拉取镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-将镜像推送到Registry"><span class="nav-number">3.</span> <span class="nav-text">3. 将镜像推送到Registry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-选择合适的镜像仓库地址"><span class="nav-number">4.</span> <span class="nav-text">4. 选择合适的镜像仓库地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-示例"><span class="nav-number">5.</span> <span class="nav-text">5. 示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-注意问题"><span class="nav-number">6.</span> <span class="nav-text">6. 注意问题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

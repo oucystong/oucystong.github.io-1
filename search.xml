@@ -1,341 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>JDBC连接池和JDBCTemplate</title>
-    <url>/2019/11/25/JDBC%E8%BF%9E%E6%8E%A5%E6%B1%A0&amp;JDBCTemplate%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. 数据库连接池
-2. Spring JDBC : JDBC Template</code></pre><a id="more"></a><h2 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h2><pre><code>1. 概念：其实就是一个容器(集合)，存放数据库连接的容器。
-        当系统初始化好后，容器被创建，容器中会申请一些连接对象，当用户来访问数据库时，从容器中获取连接对象，用户访问完之后，会将连接对象归还给容器。
+    <title>2019-11.30</title>
+    <url>/2019/11/30/2019-11.30/</url>
+    <content><![CDATA[<p>这两天学习了Docker，确实是很不错的技术，学习笔记导出后乱码，有意寻者可联系我。</p>]]></content>
+  </entry>
+  <entry>
+    <title>通过阿里云安装及配置Docker</title>
+    <url>/2019/11/28/%E9%80%9A%E8%BF%87%E9%98%BF%E9%87%8C%E4%BA%91%E5%AE%89%E8%A3%85%E5%8F%8A%E9%85%8D%E7%BD%AEDocker/</url>
+    <content><![CDATA[<h2 id="注册账号"><a href="#注册账号" class="headerlink" title="注册账号"></a>注册账号</h2><p>登陆阿里云，注册账号，使用账号登陆之后，依次点击：</p><a id="more"></a>
+<p>产品与服务–&gt;容器镜像服务–&gt;镜像加速器</p>
+<p>注意：使用加速器可以提升获取Docker官方镜像的速度，每个账号的Docker加速器地址是不一样的。</p>
+<h2 id="Ubuntu安装及配置Docker"><a href="#Ubuntu安装及配置Docker" class="headerlink" title="Ubuntu安装及配置Docker"></a>Ubuntu安装及配置Docker</h2><p>1.安装／升级Docker客户端</p>
+<p>推荐安装1.10.0以上版本的Docker客户端，参考文档<a href="https://yq.aliyun.com/articles/110806" target="_blank" rel="noopener">docker-ce</a></p>
+<p>2.配置镜像加速器</p>
+<ul>
+<li>针对Docker客户端版本大于 1.10.0 的用户</li>
+</ul>
+<p>您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-&apos;EOF&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;自己的加速器地址&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
 
-2. 好处：
-    1. 节约资源
-    2. 用户访问高效
+<h2 id="CentOS安装及配置Docker"><a href="#CentOS安装及配置Docker" class="headerlink" title="CentOS安装及配置Docker"></a>CentOS安装及配置Docker</h2><p>1.安装／升级Docker客户端</p>
+<p>推荐安装1.10.0以上版本的Docker客户端，参考文档 <a href="https://yq.aliyun.com/articles/110806" target="_blank" rel="noopener">docker-ce</a></p>
+<p>2.配置镜像加速器</p>
+<ul>
+<li>针对Docker客户端版本大于 1.10.0 的用户</li>
+</ul>
+<p>您可以通过修改daemon配置文件/etc/docker/daemon.json来使用加速器</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /etc/docker</span><br><span class="line">sudo tee /etc/docker/daemon.json &lt;&lt;-&apos;EOF&apos;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;自己的加速器地址&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
 
-3. 实现：
-    1. 标准接口：DataSource   javax.sql包下的
-        1. 方法：
-            * 获取连接：getConnection()
-            * 归还连接：Connection.close()。如果连接对象Connection是从连接池中获取的，那么调用Connection.close()方法，则不会再关闭连接了。而是归还连接
+<h2 id="Mac安装及配置Docker"><a href="#Mac安装及配置Docker" class="headerlink" title="Mac安装及配置Docker"></a>Mac安装及配置Docker</h2><p>1.安装／升级Docker客户端</p>
+<p>对于10.10.3以下的用户 推荐使用Docker Toolbox</p>
+<p>Mac安装文件：<a href="http://mirrors.aliyun.com/docker-toolbox/mac/docker-toolbox/" target="_blank" rel="noopener">http://mirrors.aliyun.com/docker-toolbox/mac/docker-toolbox/</a></p>
+<p>对于10.10.3以上的用户 推荐使用Docker for Mac</p>
+<p>Mac安装文件：<a href="http://mirrors.aliyun.com/docker-toolbox/mac/docker-for-mac/" target="_blank" rel="noopener">http://mirrors.aliyun.com/docker-toolbox/mac/docker-for-mac/</a></p>
+<p>2.配置镜像加速器</p>
+<ul>
+<li>针对安装了Docker Toolbox的用户，您可以参考以下配置步骤：</li>
+</ul>
+<p>创建一台安装有Docker环境的Linux虚拟机，指定机器名称为default，同时配置Docker加速器地址。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker-machine create --engine-registry-mirror=自己的加速器地址 -d virtualbox default</span><br></pre></td></tr></table></figure>
 
-    2. 一般我们不去实现它，有数据库厂商来实现
-        1. C3P0：数据库连接池技术
-        2. Druid：数据库连接池实现技术，由阿里巴巴提供的
+<p>查看机器的环境配置，并配置到本地，并通过Docker客户端访问Docker服务。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker-machine env default</span><br><span class="line">eval &quot;$(docker-machine env default)&quot;</span><br><span class="line">docker info</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>针对安装了Docker for Mac的用户，您可以参考以下配置步骤：</li>
+</ul>
+<p>右键点击桌面顶栏的 docker 图标，选择 Preferences ，在 Daemon 标签（Docker 17.03 之前版本为 Advanced 标签）下的 Registry mirrors 列表中将自己的加速器地址加到”registry-mirrors”的数组里，点击 Apply &amp; Restart按钮，等待Docker重启并应用配置的镜像加速器。</p>
+<h2 id="Windows安装及配置Docker"><a href="#Windows安装及配置Docker" class="headerlink" title="Windows安装及配置Docker"></a>Windows安装及配置Docker</h2><p>1.安装／升级Docker客户端</p>
+<p>对于Windows 10以下的用户，推荐使用Docker Toolbox</p>
+<p>Windows安装文件：<a href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/" target="_blank" rel="noopener">http://mirrors.aliyun.com/docker-toolbox/windows/docker-toolbox/</a></p>
+<p>对于Windows 10以上的用户 推荐使用Docker for Windows</p>
+<p>Windows安装文件：<a href="http://mirrors.aliyun.com/docker-toolbox/windows/docker-for-windows/" target="_blank" rel="noopener">http://mirrors.aliyun.com/docker-toolbox/windows/docker-for-windows/</a></p>
+<p>2.配置镜像加速器</p>
+<ul>
+<li>针对安装了Docker Toolbox的用户，您可以参考以下配置步骤：</li>
+</ul>
+<p>创建一台安装有Docker环境的Linux虚拟机，指定机器名称为default，同时配置Docker加速器地址。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker-machine create --engine-registry-mirror=https://20xtftn8.mirror.aliyuncs.com -d virtualbox default</span><br></pre></td></tr></table></figure>
 
-4. C3P0：数据库连接池技术
-    * 步骤：
-        1. 导入jar包 (两个) c3p0-0.9.5.2.jar mchange-commons-java-0.2.12.jar ，
-            * 不要忘记导入数据库驱动jar包
-            * 在项目目录下面建立libs目录，然后将jar包复制进去，将该文件夹右键Add in Library即可。
-        2. 定义配置文件：
-            * 名称： c3p0.properties 或者 c3p0-config.xml
-            * 路径：直接将文件放在src目录下即可。
+<p>查看机器的环境配置，并配置到本地，并通过Docker客户端访问Docker服务。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker-machine env default</span><br><span class="line">eval &quot;$(docker-machine env default)&quot;</span><br><span class="line">docker info</span><br></pre></td></tr></table></figure>
 
-        3. 创建核心对象 数据库连接池对象 ComboPooledDataSource
-        4. 获取连接： getConnection
-    * 代码：
-         //1.创建数据库连接池对象
-        DataSource ds  = new ComboPooledDataSource();
-        //2. 获取连接对象
-        Connection conn = ds.getConnection();
-  * 关于配置文件
-      1. C3P0的配置文件很人性化，可以在一个配置文件中定义多个连接池的属性，在获取DataSource对象的时候，只要传入不同的字符串参数（配置文件中name属性），就会加载不同配置的连接池。
-      2. 例
-      DataSource ds  = new ComboPooledDataSource();//获取默认配置的连接池对象
-      DataSource ds  = new ComboPooledDataSource(&quot;otherc3p0&quot;);//获取指定配置的连接池对象
+<ul>
+<li>针对安装了Docker for Windows的用户，您可以参考以下配置步骤：</li>
+</ul>
+<p>在系统右下角托盘图标内右键菜单选择 Settings，打开配置窗口后左侧导航菜单选择 Docker Daemon。编辑窗口内的JSON串，填写下方加速器地址：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;https://20xtftn8.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-5. Druid：数据库连接池实现技术，由阿里巴巴提供的，性能最好最优秀，还是国产。
-    1. 步骤：
-        1. 导入jar包 druid-1.0.9.jar
-        2. 定义配置文件：
-            * 是properties形式的
-            * 可以叫任意名称，可以放在任意目录下
-            * #是properties中的注释
-        3. 加载配置文件。Properties
-        4. 获取数据库连接池对象：通过工厂类来获取  DruidDataSourceFactory
-        5. 获取连接：getConnection
-    * 代码：
-         //3.加载配置文件
-        Properties pro = new Properties();
-        InputStream is = DruidDemo.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
-        pro.load(is);
-        //4.获取连接池对象
-        DataSource ds = DruidDataSourceFactory.createDataSource(pro);
-        //5.获取连接
-        Connection conn = ds.getConnection();
-    2. 定义工具类
-        1. 定义一个类 JDBCUtils
-        2. 提供静态代码块加载配置文件，初始化连接池对象
-        3. 提供方法
-            1. 获取连接方法：通过数据库连接池获取连接
-            2. 释放资源
-            3. 获取连接池的方法
+<p>编辑完成后点击 Apply 保存按钮，等待Docker重启并应用配置的镜像加速器。</p>
+<ul>
+<li>注意</li>
+</ul>
+<p>Docker for Windows 和 Docker Toolbox互不兼容，如果同时安装两者的话，需要使用hyperv的参数启动。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker-machine create --engine-registry-mirror=https://20xtftn8.mirror.aliyuncs.com -d hyperv default</span><br></pre></td></tr></table></figure>
 
-
-    * 代码：
-        public class JDBCUtils {
-
-            //1.定义成员变量 DataSource
-            private static DataSource ds ;
-
-            static{
-                try {
-                    //1.加载配置文件
-                    Properties pro = new Properties();
-                    pro.load(JDBCUtils.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;));
-                    //2.获取DataSource
-                    ds = DruidDataSourceFactory.createDataSource(pro);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            /**
-             * 获取连接
-             */
-            public static Connection getConnection() throws SQLException {
-                return ds.getConnection();
-            }
-
-            /**
-             * 释放资源
-             */
-            public static void close(Statement stmt,Connection conn){
-               /* if(stmt != null){
-                    try {
-                        stmt.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(conn != null){
-                    try {
-                        conn.close();//归还连接
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }*/
-
-               close(null,stmt,conn);
-            }
-
-            public static void close(ResultSet rs , Statement stmt, Connection conn){
-
-                if(rs != null){
-                    try {
-                        rs.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(stmt != null){
-                    try {
-                        stmt.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(conn != null){
-                    try {
-                        conn.close();//归还连接
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            /**
-             * 获取连接池方法
-             */
-
-            public static DataSource getDataSource(){
-                return  ds;
-            }
-
-        }</code></pre><h2 id="Spring-JDBC"><a href="#Spring-JDBC" class="headerlink" title="Spring JDBC"></a>Spring JDBC</h2><pre><code>* Spring框架对JDBC的简单封装。提供了一个JDBCTemplate对象简化JDBC的开发
-* 步骤：
-    1. 导入jar包  lib下面的jar包全部导入。
-    2. 创建JdbcTemplate对象。依赖于数据源DataSource
-        * JdbcTemplate template = new JdbcTemplate(ds);
-
-    3. 调用JdbcTemplate的方法来完成CRUD的操作
-        * update():执行DML语句。增、删、改语句
-        * queryForMap():查询结果将结果集封装为map集合，将列名作为key，将值作为value 将这条记录封装为一个map集合
-            * 注意：这个方法查询的结果集长度只能是1
-        * queryForList():查询结果将结果集封装为list集合
-            * 注意：将每一条记录封装为一个Map集合，再将Map集合装载到List集合中
-        * query():查询结果，将结果封装为JavaBean对象
-            * query的参数：RowMapper
-                * 一般我们使用BeanPropertyRowMapper实现类。可以完成数据到JavaBean的自动封装
-                * new BeanPropertyRowMapper&lt;类型&gt;(类型.class)
-        * queryForObject：查询结果，将结果封装为对象
-            * 一般用于聚合函数的查询
-
-    4. 练习：
-        * 需求：
-            1. 修改1号数据的 salary 为 10000
-            2. 添加一条记录
-            3. 删除刚才添加的记录
-            4. 查询id为1的记录，将其封装为Map集合
-            5. 查询所有记录，将其封装为List
-            6. 查询所有记录，将其封装为Emp对象的List集合
-            7. 查询总记录数
-
-        * 代码：
-
-            import cn.itcast.domain.Emp;
-            import cn.itcast.utils.JDBCUtils;
-            import org.junit.Test;
-            import org.springframework.jdbc.core.BeanPropertyRowMapper;
-            import org.springframework.jdbc.core.JdbcTemplate;
-            import org.springframework.jdbc.core.RowMapper;
-
-            import java.sql.Date;
-            import java.sql.ResultSet;
-            import java.sql.SQLException;
-            import java.util.List;
-            import java.util.Map;
-
-            public class JdbcTemplateDemo2 {
-
-                //Junit单元测试，可以让方法独立执行
-
-                //1. 获取JDBCTemplate对象
-                private JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDataSource());
-                /**
-                 * 1. 修改1号数据的 salary 为 10000
-                 */
-                @Test
-                public void test1(){
-
-                    //2. 定义sql
-                    String sql = &quot;update emp set salary = 10000 where id = 1001&quot;;
-                    //3. 执行sql
-                    int count = template.update(sql);
-                    System.out.println(count);
-                }
-
-                /**
-                 * 2. 添加一条记录
-                 */
-                @Test
-                public void test2(){
-                    String sql = &quot;insert into emp(id,ename,dept_id) values(?,?,?)&quot;;
-                    int count = template.update(sql, 1015, &quot;郭靖&quot;, 10);
-                    System.out.println(count);
-
-                }
-
-                /**
-                 * 3.删除刚才添加的记录
-                 */
-                @Test
-                public void test3(){
-                    String sql = &quot;delete from emp where id = ?&quot;;
-                    int count = template.update(sql, 1015);
-                    System.out.println(count);
-                }
-
-                /**
-                 * 4.查询id为1001的记录，将其封装为Map集合
-                 * 注意：这个方法查询的结果集长度只能是1
-                 */
-                @Test
-                public void test4(){
-                    String sql = &quot;select * from emp where id = ? or id = ?&quot;;
-                    Map&lt;String, Object&gt; map = template.queryForMap(sql, 1001,1002);
-                    System.out.println(map);
-                    //{id=1001, ename=孙悟空, job_id=4, mgr=1004, joindate=2000-12-17, salary=10000.00, bonus=null, dept_id=20}
-
-                }
-
-                /**
-                 * 5. 查询所有记录，将其封装为List
-                 */
-                @Test
-                public void test5(){
-                    String sql = &quot;select * from emp&quot;;
-                    List&lt;Map&lt;String, Object&gt;&gt; list = template.queryForList(sql);
-
-                    for (Map&lt;String, Object&gt; stringObjectMap : list) {
-                        System.out.println(stringObjectMap);
-                    }
-                }
-
-                /**
-                 * 6. 查询所有记录，将其封装为Emp对象的List集合
-                 */
-
-                @Test
-                public void test6(){
-                    String sql = &quot;select * from emp&quot;;
-                    List&lt;Emp&gt; list = template.query(sql, new RowMapper&lt;Emp&gt;() {
-
-                        @Override
-                        public Emp mapRow(ResultSet rs, int i) throws SQLException {
-                            Emp emp = new Emp();
-                            int id = rs.getInt(&quot;id&quot;);
-                            String ename = rs.getString(&quot;ename&quot;);
-                            int job_id = rs.getInt(&quot;job_id&quot;);
-                            int mgr = rs.getInt(&quot;mgr&quot;);
-                            Date joindate = rs.getDate(&quot;joindate&quot;);
-                            double salary = rs.getDouble(&quot;salary&quot;);
-                            double bonus = rs.getDouble(&quot;bonus&quot;);
-                            int dept_id = rs.getInt(&quot;dept_id&quot;);
-
-                            emp.setId(id);
-                            emp.setEname(ename);
-                            emp.setJob_id(job_id);
-                            emp.setMgr(mgr);
-                            emp.setJoindate(joindate);
-                            emp.setSalary(salary);
-                            emp.setBonus(bonus);
-                            emp.setDept_id(dept_id);
-
-                            return emp;
-                        }
-                    });
-
-                    for (Emp emp : list) {
-                        System.out.println(emp);
-                    }
-                }
-
-                /**
-                 * 6. 查询所有记录，将其封装为Emp对象的List集合
-                 */
-
-                @Test
-                public void test6_2(){
-                    String sql = &quot;select * from emp&quot;;
-                    List&lt;Emp&gt; list = template.query(sql, new BeanPropertyRowMapper&lt;Emp&gt;(Emp.class));
-                    for (Emp emp : list) {
-                        System.out.println(emp);
-                    }
-                }
-
-                /**
-                 * 7. 查询总记录数
-                 */
-
-                @Test
-                public void test7(){
-                    String sql = &quot;select count(id) from emp&quot;;
-                    Long total = template.queryForObject(sql, Long.class);
-                    System.out.println(total);
-                }
-
-            }</code></pre>]]></content>
+<p>Docker for Windows 有两种运行模式，一种运行Windows相关容器，一种运行传统的Linux容器。同一时间只能选择一种模式运行。</p>
+]]></content>
       <categories>
-        <category>JDBC</category>
+        <category>Docker</category>
       </categories>
       <tags>
-        <tag>JDBC连接池JDBCTemplate</tag>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里云的容器镜像管理</title>
+    <url>/2019/11/28/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9A%84%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<h2 id="1-登录阿里云Docker-Registry"><a href="#1-登录阿里云Docker-Registry" class="headerlink" title="1. 登录阿里云Docker Registry"></a>1. 登录阿里云Docker Registry</h2><a id="more"></a><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker login --username=ethan_oucystong registry.cn-shenzhen.aliyuncs.com</span><br></pre></td></tr></table></figure>
+
+<p>用于登录的用户名为阿里云账号全名，密码为开通服务时设置的密码。</p>
+<p>您可以在访问凭证页面修改凭证密码。</p>
+<h2 id="2-从Registry中拉取镜像"><a href="#2-从Registry中拉取镜像" class="headerlink" title="2. 从Registry中拉取镜像"></a>2. 从Registry中拉取镜像</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker pull registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-将镜像推送到Registry"><a href="#3-将镜像推送到Registry" class="headerlink" title="3. 将镜像推送到Registry"></a>3. 将镜像推送到Registry</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker login --username=ethan_oucystong registry.cn-shenzhen.aliyuncs.com</span><br><span class="line">$ sudo docker tag [ImageId] registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br><span class="line">$ sudo docker push registry.cn-shenzhen.aliyuncs.com/ouc/test:[镜像版本号]</span><br></pre></td></tr></table></figure>
+
+<p>请根据实际镜像信息替换示例中的[ImageId]和[镜像版本号]参数。</p>
+<h2 id="4-选择合适的镜像仓库地址"><a href="#4-选择合适的镜像仓库地址" class="headerlink" title="4. 选择合适的镜像仓库地址"></a>4. 选择合适的镜像仓库地址</h2><p>从ECS推送镜像时，可以选择使用镜像仓库内网地址。推送速度将得到提升并且将不会损耗您的公网流量。</p>
+<p>如果您使用的机器位于VPC网络，请使用 registry-vpc.cn-shenzhen.aliyuncs.com 作为Registry的域名登录，并作为镜像命名空间前缀。</p>
+<h2 id="5-示例"><a href="#5-示例" class="headerlink" title="5. 示例"></a>5. 示例</h2><p>使用”docker tag”命令重命名镜像，并将它通过专有网络地址推送至Registry。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker images</span><br><span class="line">REPOSITORY                                                         TAG                 IMAGE ID            CREATED             VIRTUAL SIZE</span><br><span class="line">registry.aliyuncs.com/acs/agent                                    0.7-dfb6816         37bb9c63c8b2        7 days ago          37.89 MB</span><br><span class="line">$ sudo docker tag 37bb9c63c8b2 registry-vpc.cn-shenzhen.aliyuncs.com/acs/agent:0.7-dfb6816</span><br></pre></td></tr></table></figure>
+
+<p>使用”docker images”命令找到镜像，将该镜像名称中的域名部分变更为Registry专有网络地址。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ sudo docker push registry-vpc.cn-shenzhen.aliyuncs.com/acs/agent:0.7-dfb6816</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-注意问题"><a href="#6-注意问题" class="headerlink" title="6. 注意问题"></a>6. 注意问题</h2><ul>
+<li>仓库名必须与阿里云所在仓库名相匹配</li>
+<li>非docker-hub的镜像仓库，名称空间前需要指明服务器地址，及这里的registry.cn-shenzhen.aliyuncs.com</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -797,6 +576,646 @@ Person接口    Worker实现类（实现了Person接口）   Person p=new Worker
       </categories>
       <tags>
         <tag>JDBC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JDBC连接池和JDBCTemplate</title>
+    <url>/2019/11/25/JDBC%E8%BF%9E%E6%8E%A5%E6%B1%A0&amp;JDBCTemplate%E8%AF%BE%E5%A0%82%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. 数据库连接池
+2. Spring JDBC : JDBC Template</code></pre><a id="more"></a><h2 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h2><pre><code>1. 概念：其实就是一个容器(集合)，存放数据库连接的容器。
+        当系统初始化好后，容器被创建，容器中会申请一些连接对象，当用户来访问数据库时，从容器中获取连接对象，用户访问完之后，会将连接对象归还给容器。
+
+2. 好处：
+    1. 节约资源
+    2. 用户访问高效
+
+3. 实现：
+    1. 标准接口：DataSource   javax.sql包下的
+        1. 方法：
+            * 获取连接：getConnection()
+            * 归还连接：Connection.close()。如果连接对象Connection是从连接池中获取的，那么调用Connection.close()方法，则不会再关闭连接了。而是归还连接
+
+    2. 一般我们不去实现它，有数据库厂商来实现
+        1. C3P0：数据库连接池技术
+        2. Druid：数据库连接池实现技术，由阿里巴巴提供的
+
+
+4. C3P0：数据库连接池技术
+    * 步骤：
+        1. 导入jar包 (两个) c3p0-0.9.5.2.jar mchange-commons-java-0.2.12.jar ，
+            * 不要忘记导入数据库驱动jar包
+            * 在项目目录下面建立libs目录，然后将jar包复制进去，将该文件夹右键Add in Library即可。
+        2. 定义配置文件：
+            * 名称： c3p0.properties 或者 c3p0-config.xml
+            * 路径：直接将文件放在src目录下即可。
+
+        3. 创建核心对象 数据库连接池对象 ComboPooledDataSource
+        4. 获取连接： getConnection
+    * 代码：
+         //1.创建数据库连接池对象
+        DataSource ds  = new ComboPooledDataSource();
+        //2. 获取连接对象
+        Connection conn = ds.getConnection();
+  * 关于配置文件
+      1. C3P0的配置文件很人性化，可以在一个配置文件中定义多个连接池的属性，在获取DataSource对象的时候，只要传入不同的字符串参数（配置文件中name属性），就会加载不同配置的连接池。
+      2. 例
+      DataSource ds  = new ComboPooledDataSource();//获取默认配置的连接池对象
+      DataSource ds  = new ComboPooledDataSource(&quot;otherc3p0&quot;);//获取指定配置的连接池对象
+
+5. Druid：数据库连接池实现技术，由阿里巴巴提供的，性能最好最优秀，还是国产。
+    1. 步骤：
+        1. 导入jar包 druid-1.0.9.jar
+        2. 定义配置文件：
+            * 是properties形式的
+            * 可以叫任意名称，可以放在任意目录下
+            * #是properties中的注释
+        3. 加载配置文件。Properties
+        4. 获取数据库连接池对象：通过工厂类来获取  DruidDataSourceFactory
+        5. 获取连接：getConnection
+    * 代码：
+         //3.加载配置文件
+        Properties pro = new Properties();
+        InputStream is = DruidDemo.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;);
+        pro.load(is);
+        //4.获取连接池对象
+        DataSource ds = DruidDataSourceFactory.createDataSource(pro);
+        //5.获取连接
+        Connection conn = ds.getConnection();
+    2. 定义工具类
+        1. 定义一个类 JDBCUtils
+        2. 提供静态代码块加载配置文件，初始化连接池对象
+        3. 提供方法
+            1. 获取连接方法：通过数据库连接池获取连接
+            2. 释放资源
+            3. 获取连接池的方法
+
+
+    * 代码：
+        public class JDBCUtils {
+
+            //1.定义成员变量 DataSource
+            private static DataSource ds ;
+
+            static{
+                try {
+                    //1.加载配置文件
+                    Properties pro = new Properties();
+                    pro.load(JDBCUtils.class.getClassLoader().getResourceAsStream(&quot;druid.properties&quot;));
+                    //2.获取DataSource
+                    ds = DruidDataSourceFactory.createDataSource(pro);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            /**
+             * 获取连接
+             */
+            public static Connection getConnection() throws SQLException {
+                return ds.getConnection();
+            }
+
+            /**
+             * 释放资源
+             */
+            public static void close(Statement stmt,Connection conn){
+               /* if(stmt != null){
+                    try {
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(conn != null){
+                    try {
+                        conn.close();//归还连接
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }*/
+
+               close(null,stmt,conn);
+            }
+
+            public static void close(ResultSet rs , Statement stmt, Connection conn){
+
+                if(rs != null){
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(stmt != null){
+                    try {
+                        stmt.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(conn != null){
+                    try {
+                        conn.close();//归还连接
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            /**
+             * 获取连接池方法
+             */
+
+            public static DataSource getDataSource(){
+                return  ds;
+            }
+
+        }</code></pre><h2 id="Spring-JDBC"><a href="#Spring-JDBC" class="headerlink" title="Spring JDBC"></a>Spring JDBC</h2><pre><code>* Spring框架对JDBC的简单封装。提供了一个JDBCTemplate对象简化JDBC的开发
+* 步骤：
+    1. 导入jar包  lib下面的jar包全部导入。
+    2. 创建JdbcTemplate对象。依赖于数据源DataSource
+        * JdbcTemplate template = new JdbcTemplate(ds);
+
+    3. 调用JdbcTemplate的方法来完成CRUD的操作
+        * update():执行DML语句。增、删、改语句
+        * queryForMap():查询结果将结果集封装为map集合，将列名作为key，将值作为value 将这条记录封装为一个map集合
+            * 注意：这个方法查询的结果集长度只能是1
+        * queryForList():查询结果将结果集封装为list集合
+            * 注意：将每一条记录封装为一个Map集合，再将Map集合装载到List集合中
+        * query():查询结果，将结果封装为JavaBean对象
+            * query的参数：RowMapper
+                * 一般我们使用BeanPropertyRowMapper实现类。可以完成数据到JavaBean的自动封装
+                * new BeanPropertyRowMapper&lt;类型&gt;(类型.class)
+        * queryForObject：查询结果，将结果封装为对象
+            * 一般用于聚合函数的查询
+
+    4. 练习：
+        * 需求：
+            1. 修改1号数据的 salary 为 10000
+            2. 添加一条记录
+            3. 删除刚才添加的记录
+            4. 查询id为1的记录，将其封装为Map集合
+            5. 查询所有记录，将其封装为List
+            6. 查询所有记录，将其封装为Emp对象的List集合
+            7. 查询总记录数
+
+        * 代码：
+
+            import cn.itcast.domain.Emp;
+            import cn.itcast.utils.JDBCUtils;
+            import org.junit.Test;
+            import org.springframework.jdbc.core.BeanPropertyRowMapper;
+            import org.springframework.jdbc.core.JdbcTemplate;
+            import org.springframework.jdbc.core.RowMapper;
+
+            import java.sql.Date;
+            import java.sql.ResultSet;
+            import java.sql.SQLException;
+            import java.util.List;
+            import java.util.Map;
+
+            public class JdbcTemplateDemo2 {
+
+                //Junit单元测试，可以让方法独立执行
+
+                //1. 获取JDBCTemplate对象
+                private JdbcTemplate template = new JdbcTemplate(JDBCUtils.getDataSource());
+                /**
+                 * 1. 修改1号数据的 salary 为 10000
+                 */
+                @Test
+                public void test1(){
+
+                    //2. 定义sql
+                    String sql = &quot;update emp set salary = 10000 where id = 1001&quot;;
+                    //3. 执行sql
+                    int count = template.update(sql);
+                    System.out.println(count);
+                }
+
+                /**
+                 * 2. 添加一条记录
+                 */
+                @Test
+                public void test2(){
+                    String sql = &quot;insert into emp(id,ename,dept_id) values(?,?,?)&quot;;
+                    int count = template.update(sql, 1015, &quot;郭靖&quot;, 10);
+                    System.out.println(count);
+
+                }
+
+                /**
+                 * 3.删除刚才添加的记录
+                 */
+                @Test
+                public void test3(){
+                    String sql = &quot;delete from emp where id = ?&quot;;
+                    int count = template.update(sql, 1015);
+                    System.out.println(count);
+                }
+
+                /**
+                 * 4.查询id为1001的记录，将其封装为Map集合
+                 * 注意：这个方法查询的结果集长度只能是1
+                 */
+                @Test
+                public void test4(){
+                    String sql = &quot;select * from emp where id = ? or id = ?&quot;;
+                    Map&lt;String, Object&gt; map = template.queryForMap(sql, 1001,1002);
+                    System.out.println(map);
+                    //{id=1001, ename=孙悟空, job_id=4, mgr=1004, joindate=2000-12-17, salary=10000.00, bonus=null, dept_id=20}
+
+                }
+
+                /**
+                 * 5. 查询所有记录，将其封装为List
+                 */
+                @Test
+                public void test5(){
+                    String sql = &quot;select * from emp&quot;;
+                    List&lt;Map&lt;String, Object&gt;&gt; list = template.queryForList(sql);
+
+                    for (Map&lt;String, Object&gt; stringObjectMap : list) {
+                        System.out.println(stringObjectMap);
+                    }
+                }
+
+                /**
+                 * 6. 查询所有记录，将其封装为Emp对象的List集合
+                 */
+
+                @Test
+                public void test6(){
+                    String sql = &quot;select * from emp&quot;;
+                    List&lt;Emp&gt; list = template.query(sql, new RowMapper&lt;Emp&gt;() {
+
+                        @Override
+                        public Emp mapRow(ResultSet rs, int i) throws SQLException {
+                            Emp emp = new Emp();
+                            int id = rs.getInt(&quot;id&quot;);
+                            String ename = rs.getString(&quot;ename&quot;);
+                            int job_id = rs.getInt(&quot;job_id&quot;);
+                            int mgr = rs.getInt(&quot;mgr&quot;);
+                            Date joindate = rs.getDate(&quot;joindate&quot;);
+                            double salary = rs.getDouble(&quot;salary&quot;);
+                            double bonus = rs.getDouble(&quot;bonus&quot;);
+                            int dept_id = rs.getInt(&quot;dept_id&quot;);
+
+                            emp.setId(id);
+                            emp.setEname(ename);
+                            emp.setJob_id(job_id);
+                            emp.setMgr(mgr);
+                            emp.setJoindate(joindate);
+                            emp.setSalary(salary);
+                            emp.setBonus(bonus);
+                            emp.setDept_id(dept_id);
+
+                            return emp;
+                        }
+                    });
+
+                    for (Emp emp : list) {
+                        System.out.println(emp);
+                    }
+                }
+
+                /**
+                 * 6. 查询所有记录，将其封装为Emp对象的List集合
+                 */
+
+                @Test
+                public void test6_2(){
+                    String sql = &quot;select * from emp&quot;;
+                    List&lt;Emp&gt; list = template.query(sql, new BeanPropertyRowMapper&lt;Emp&gt;(Emp.class));
+                    for (Emp emp : list) {
+                        System.out.println(emp);
+                    }
+                }
+
+                /**
+                 * 7. 查询总记录数
+                 */
+
+                @Test
+                public void test7(){
+                    String sql = &quot;select count(id) from emp&quot;;
+                    Long total = template.queryForObject(sql, Long.class);
+                    System.out.println(total);
+                }
+
+            }</code></pre>]]></content>
+      <categories>
+        <category>JDBC</category>
+      </categories>
+      <tags>
+        <tag>JDBC连接池JDBCTemplate</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL基础</title>
+    <url>/2019/11/22/MySQL%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 数据库的基本概念</span><br><span class="line">2. MySQL数据库软件</span><br><span class="line">   1. 安装</span><br><span class="line">   2. 卸载</span><br><span class="line">   3. 配置</span><br><span class="line">3. SQL</span><br></pre></td></tr></table></figure><a id="more"></a>
+
+<h2 id="数据库的基本概念"><a href="#数据库的基本概念" class="headerlink" title="数据库的基本概念"></a>数据库的基本概念</h2><pre><code>1. 数据库的英文单词： DataBase 简称 ： DB
+2. 什么数据库？
+    * 用于存储和管理数据的仓库。Excel？存储+管理
+3. 数据库的特点：
+    1. 持久化存储数据的。其实数据库就是一个文件系统
+    2. 方便存储和管理数据
+    3. 使用了统一的方式操作数据库 -- SQL
+4. 常见的数据库软件
+    * 参见《MySQL基础.pdf》</code></pre><h2 id="MySQL数据库软件"><a href="#MySQL数据库软件" class="headerlink" title="MySQL数据库软件"></a>MySQL数据库软件</h2><pre><code>1. 安装
+    * 参见《MySQL基础.pdf》  默认端口：3306
+2. 卸载
+    1. 去mysql的安装目录找到my.ini文件
+        * 复制 datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
+    2. 卸载MySQL
+    3. 删除C:/ProgramData目录下的MySQL文件夹。
+
+3. 配置
+    * MySQL服务启动
+        1. 手动（每次都是手动打开Mysql服务）或者自动（开机自动启动）
+        2. cmd--&gt; services.msc 打开服务的窗口
+        3. 使用管理员打开cmd
+            * net start mysql : 启动mysql的服务
+            * net stop mysql:关闭mysql服务
+    * MySQL登录
+        1. mysql -uroot -p密码
+        2. mysql -hip -uroot -p连接目标的密码
+        3. mysql --host=ip --user=root --password=连接目标的密码
+    * MySQL退出
+        1. exit
+        2. quit
+    注意：Mac下载了Mysql之后需要进行环境变量的配置，才可以在命令行中使用Mysql的相关命令。
+    在~/.bash_profile中追加  PATH=$PATH:/usr/local/mysql/bin
+    使其发挥作用：source ~/.bash_profile
+
+    * MySQL目录结构
+        1. MySQL安装目录：basedir=&quot;D:/develop/MySQL/&quot;
+            * 配置文件 my.ini
+        2. MySQL数据目录：datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
+            * 几个概念
+                * 数据库：文件夹
+                * 表：文件
+                * 数据：数据
+        3.通过Mac偏好设置中的配置就可以看到上述的内容，在terminal中要会进行查看，善于使用open在finder中展示，datadir普通用户是进不去的，使用sudo su进入到文件夹中。</code></pre><h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><pre><code>1.什么是SQL？
+    Structured Query Language：结构化查询语言
+    其实就是定义了操作所有关系型数据库的规则。每一种数据库操作的方式存在不一样的地方，称为“方言”。
+
+2.SQL通用语法
+    1. SQL 语句可以单行或多行书写，以分号结尾。show databases;
+    2. 可使用空格和缩进来增强语句的可读性。
+    3. MySQL 数据库的 SQL 语句不区分大小写，关键字建议使用大写。
+    4. 3 种注释
+        * 单行注释: -- 注释内容 或 #注释内容(mysql特有) 
+        * 多行注释: /*注释*/
+        * 单行注释中--的方式必须要有空格，其余没说明的情况就是不需要有空格。
+
+3. SQL分类
+    1) DDL(Data Definition Language)数据定义语言
+        用来定义数据库对象：数据库，表，列等。关键字：create, drop,alter 等
+    2) DML(Data Manipulation Language)数据操作语言
+        用来对数据库中表的数据进行增删改。关键字：insert, delete, update 等
+    3) DQL(Data Query Language)数据查询语言
+        用来查询数据库中表的记录(数据)。关键字：select, where 等
+    4) DCL(Data Control Language)数据控制语言(了解)
+        用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</code></pre><h3 id="DDL-操作数据库、表"><a href="#DDL-操作数据库、表" class="headerlink" title="DDL:操作数据库、表"></a>DDL:操作数据库、表</h3><pre><code>1. 操作数据库：CRUD
+    1. C(Create):创建
+        * 创建数据库：
+            * create database 数据库名称;
+        * 创建数据库，判断不存在，再创建：
+            * create database if not exists 数据库名称;
+        * 创建数据库，并指定字符集
+            * create database 数据库名称 character set 字符集名;
+        * 练习： 创建db4数据库，判断是否存在，并制定字符集为gbk
+            * create database if not exists db4 character set gbk;
+    2. R(Retrieve)：查询
+        * 查询所有数据库的名称:
+            * show databases;
+            * datadir下面有三个文件夹也就是有三个database，但是为什么我们在终端显示的时候会有四个呢？
+            information_schema：描述mysql数据库的信息的，比如有哪些表？以后要学习视图会用到，并没有实际的物理文件。
+            mysql：核心数据库，存了很多的表
+            performance_schema：对性能提升做操作的数据库，存了很多表
+            sys：随便动，这是一个空的数据库
+            没事别乱动上面的几个数据库的内容。
+
+        * 查询某个数据库的字符集:查询某个数据库的创建语句
+            * show create database 数据库名称;
+    3. U(Update):修改
+        * 修改数据库的字符集
+            * alter database 数据库名称 character set 字符集名称;
+    4. D(Delete):删除
+        * 删除数据库
+            * drop database 数据库名称;
+        * 判断数据库存在，存在再删除
+            * drop database if exists 数据库名称;
+    5. 使用数据库
+        * 查询当前正在使用的数据库名称
+            * select database();
+        * 使用数据库
+            * use 数据库名称;
+
+
+2. 操作表
+    1. C(Create):创建
+        1. 语法：
+            create table 表名(
+                列名1 数据类型1,
+                列名2 数据类型2,
+                ....
+                列名n 数据类型n
+            );
+            * 注意：最后一列，不需要加逗号（,）
+            * 数据库类型：
+                1. int：整数类型
+                    * age int,
+                2. double:小数类型
+                    * score double(5,2)
+                3. date:日期，只包含年月日，yyyy-MM-dd
+                4. datetime:日期，包含年月日时分秒     yyyy-MM-dd HH:mm:ss
+                5. timestamp:时间戳类型    包含年月日时分秒     yyyy-MM-dd HH:mm:ss    
+                    * 如果将来不给这个字段赋值，或赋值为null，则默认使用当前的系统时间，来自动赋值
+
+                6. varchar：字符串
+                    * name varchar(20):姓名最大20个字符
+                    * zhangsan 8个字符  张三 2个字符
+
+
+        * 创建表
+            create table student(
+                id int,
+                name varchar(32),
+                age int ,
+                score double(4,1),
+                birthday date,
+                insert_time timestamp
+            );
+        * 复制表：
+            * create table 表名 like 被复制的表名;          
+    2. R(Retrieve)：查询
+        * 查询某个数据库中所有的表名称
+            * show tables;
+        * 查询表结构
+            * desc 表名;  description
+    3. U(Update):修改
+        1. 修改表名
+            alter table 表名 rename to 新的表名;
+        2. 修改表的字符集
+            alter table 表名 character set 字符集名称;
+        3. 添加一列
+            alter table 表名 add 列名 数据类型;
+        4. 修改列名称 类型
+            alter table 表名 change 列名 新列别 新数据类型;//改列名和类型
+            alter table 表名 modify 列名 新数据类型;//只改类型
+        5. 删除列
+            alter table 表名 drop 列名;
+    4. D(Delete):删除
+        * drop table 表名;
+        * drop table  if exists 表名 ;</code></pre><ul>
+<li>客户端图形化工具：SQLYog</li>
+<li>Mac端有哪些好用的数据库客户端软件？Workbench这是Mysql官方的数据库客户端。DataGrip是jetbrain大厂的数据库客户端，很好用。</li>
+</ul>
+<h3 id="DML：增删改表中数据"><a href="#DML：增删改表中数据" class="headerlink" title="DML：增删改表中数据"></a>DML：增删改表中数据</h3><pre><code>1. 添加数据：
+    * 语法：
+        * insert into 表名(列名1,列名2,...列名n) values(值1,值2,...值n);
+    * 注意：
+        1. 列名和值要一一对应。
+        2. 如果表名后，不定义列名，则默认给所有列添加值
+            insert into 表名 values(值1,值2,...值n);
+        3. 除了数字类型，其他类型需要使用引号(单双都可以)引起来
+2. 删除数据：
+    * 语法：
+        * delete from 表名 [where 条件]
+    * 注意：
+        1. 如果不加条件，则删除表中所有记录。
+        2. 如果要删除所有记录
+            1. delete from 表名; -- 不推荐使用。有多少条记录就会执行多少次删除操作
+            2. TRUNCATE TABLE 表名; -- 推荐使用，效率更高 先删除表，然后再创建一张一样的表。
+3. 修改数据：
+    * 语法：
+        * update 表名 set 列名1 = 值1, 列名2 = 值2,... [where 条件];
+
+    * 注意：
+        1. 如果不加任何条件，则会将表中所有记录全部修改。</code></pre><h3 id="DQL：查询表中的记录"><a href="#DQL：查询表中的记录" class="headerlink" title="DQL：查询表中的记录"></a>DQL：查询表中的记录</h3><pre><code>* select * from 表名;
+
+1. 语法：
+    select
+        字段列表  多个字段逗号分隔
+    from
+        表名列表  多个表名逗号分隔
+    where
+        条件列表
+    group by
+        分组字段  分组（男生组和女生组）
+    having
+        分组之后的条件
+    order by
+        排序   升序和降序
+    limit
+        分页限定
+
+
+2. 基础查询
+    1. 多个字段的查询
+        select 字段名1，字段名2... from 表名；
+        * 注意：
+            * 如果查询所有字段，则可以使用*来替代字段列表。
+    2. 去除重复：
+        * distinct
+        保证结果集中的两条记录完全一样才可以去重。
+    3. 计算列
+        * 一般可以使用四则运算计算一些列的值。（一般只会进行数值型的计算）
+        * ifnull(表达式1,表达式2)：null参与的运算，计算结果都为null
+            * 表达式1：哪个字段需要判断是否为null
+            * 如果该字段为null后的替换值。
+    4. 起别名：
+        * as：as也可以省略，用一个或者多个空格代替
+
+示例代码：
+-- 查询姓名和年龄
+select student.name,student.age from student;
+-- 查询地址
+select student.address from student;
+-- 去除重复
+select distinct student.address from student;
+-- 保证结果集中的两条记录完全一样才可以去重。
+select distinct student.name,student.address from student;
+-- 四则运算
+select student.name,student.math,student.english,student.math+student.english from student;
+-- 四则运算定义别名
+select student.name as 名字,student.math as 数学,student.english as 英语 from student;
+-- ifnull函数的使用
+select student.name,student.math,student.english,student.math+ifnull(student.english,0) as 总分 from student;
+
+
+3. 条件查询
+    1. where子句后跟条件
+    2. 运算符
+        * &gt; 、&lt; 、&lt;= 、&gt;= 、= 、&lt;&gt;或者!=
+        * BETWEEN...AND  包含两边的值
+        * IN(集合) 
+        * LIKE：模糊查询
+            * 占位符：
+                * _:单个任意字符
+                * %:多个任意字符（包括零个字符）
+                * 在某些特殊的情况下，查询的条件丽需要使用下划线或者百分号，不希望sql把下划线和百分号当成通配符使用，这就需要使用到转义字符，mysql使用反斜杠\作为转义字符。标准sql语句并没有提供反斜杠\的转义字符，而是使用escape关键字显示进行转义。
+-- 标准sql中选出名字以下划线开头的学生
+select * from student where student.name like &apos;\_%&apos; escape &apos;\&apos;;
+        * IS NULL    IS NOT NULL  NULL值不能使用=或者!=来进行判断，只能通过IS NULL或者IS NOT NULL
+        * and  或 &amp;&amp; 推荐使用英文的
+        * or  或 || 推荐使用英文的
+        * not  或 !  推荐使用英文的
+
+            -- 查询年龄大于20岁
+
+            SELECT * FROM student WHERE age &gt; 20;
+
+            SELECT * FROM student WHERE age &gt;= 20;
+
+            -- 查询年龄等于20岁
+            SELECT * FROM student WHERE age = 20;
+
+            -- 查询年龄不等于20岁
+            SELECT * FROM student WHERE age != 20;
+            SELECT * FROM student WHERE age &lt;&gt; 20;
+
+            -- 查询年龄大于等于20 小于等于30
+
+            SELECT * FROM student WHERE age &gt;= 20 &amp;&amp;  age &lt;=30;
+            SELECT * FROM student WHERE age &gt;= 20 AND  age &lt;=30;
+            SELECT * FROM student WHERE age BETWEEN 20 AND 30;
+
+            -- 查询年龄22岁，18岁，25岁的信息
+            SELECT * FROM student WHERE age = 22 OR age = 18 OR age = 25;
+            SELECT * FROM student WHERE age IN (22,18,25);
+
+            -- 查询英语成绩为null
+            SELECT * FROM student WHERE english = NULL; -- 不对的。null值不能使用 = （!=） 判断
+
+            SELECT * FROM student WHERE english IS NULL;
+
+            -- 查询英语成绩不为null
+            SELECT * FROM student WHERE english  IS NOT NULL;
+            -- 查询姓马的有哪些？ like
+            SELECT * FROM student WHERE NAME LIKE &apos;马%&apos;;
+            -- 查询姓名第二个字是化的人
+            SELECT * FROM student WHERE NAME LIKE &quot;_化%&quot;;
+            -- 查询姓名是3个字的人
+            SELECT * FROM student WHERE NAME LIKE &apos;___&apos;;
+            -- 查询姓名中包含德的人
+      SELECT * FROM student WHERE NAME LIKE &apos;%德%&apos;;</code></pre><p>​                </p>
+<p>​    </p>
+]]></content>
+      <categories>
+        <category>SQL</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
       </tags>
   </entry>
   <entry>
@@ -1267,392 +1686,6 @@ Person接口    Worker实现类（实现了Person接口）   Person p=new Worker
       </tags>
   </entry>
   <entry>
-    <title>MySQL基础</title>
-    <url>/2019/11/22/MySQL%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 数据库的基本概念</span><br><span class="line">2. MySQL数据库软件</span><br><span class="line">   1. 安装</span><br><span class="line">   2. 卸载</span><br><span class="line">   3. 配置</span><br><span class="line">3. SQL</span><br></pre></td></tr></table></figure><a id="more"></a>
-
-<h2 id="数据库的基本概念"><a href="#数据库的基本概念" class="headerlink" title="数据库的基本概念"></a>数据库的基本概念</h2><pre><code>1. 数据库的英文单词： DataBase 简称 ： DB
-2. 什么数据库？
-    * 用于存储和管理数据的仓库。Excel？存储+管理
-3. 数据库的特点：
-    1. 持久化存储数据的。其实数据库就是一个文件系统
-    2. 方便存储和管理数据
-    3. 使用了统一的方式操作数据库 -- SQL
-4. 常见的数据库软件
-    * 参见《MySQL基础.pdf》</code></pre><h2 id="MySQL数据库软件"><a href="#MySQL数据库软件" class="headerlink" title="MySQL数据库软件"></a>MySQL数据库软件</h2><pre><code>1. 安装
-    * 参见《MySQL基础.pdf》  默认端口：3306
-2. 卸载
-    1. 去mysql的安装目录找到my.ini文件
-        * 复制 datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
-    2. 卸载MySQL
-    3. 删除C:/ProgramData目录下的MySQL文件夹。
-
-3. 配置
-    * MySQL服务启动
-        1. 手动（每次都是手动打开Mysql服务）或者自动（开机自动启动）
-        2. cmd--&gt; services.msc 打开服务的窗口
-        3. 使用管理员打开cmd
-            * net start mysql : 启动mysql的服务
-            * net stop mysql:关闭mysql服务
-    * MySQL登录
-        1. mysql -uroot -p密码
-        2. mysql -hip -uroot -p连接目标的密码
-        3. mysql --host=ip --user=root --password=连接目标的密码
-    * MySQL退出
-        1. exit
-        2. quit
-    注意：Mac下载了Mysql之后需要进行环境变量的配置，才可以在命令行中使用Mysql的相关命令。
-    在~/.bash_profile中追加  PATH=$PATH:/usr/local/mysql/bin
-    使其发挥作用：source ~/.bash_profile
-
-    * MySQL目录结构
-        1. MySQL安装目录：basedir=&quot;D:/develop/MySQL/&quot;
-            * 配置文件 my.ini
-        2. MySQL数据目录：datadir=&quot;C:/ProgramData/MySQL/MySQL Server 5.5/Data/&quot;
-            * 几个概念
-                * 数据库：文件夹
-                * 表：文件
-                * 数据：数据
-        3.通过Mac偏好设置中的配置就可以看到上述的内容，在terminal中要会进行查看，善于使用open在finder中展示，datadir普通用户是进不去的，使用sudo su进入到文件夹中。</code></pre><h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><pre><code>1.什么是SQL？
-    Structured Query Language：结构化查询语言
-    其实就是定义了操作所有关系型数据库的规则。每一种数据库操作的方式存在不一样的地方，称为“方言”。
-
-2.SQL通用语法
-    1. SQL 语句可以单行或多行书写，以分号结尾。show databases;
-    2. 可使用空格和缩进来增强语句的可读性。
-    3. MySQL 数据库的 SQL 语句不区分大小写，关键字建议使用大写。
-    4. 3 种注释
-        * 单行注释: -- 注释内容 或 #注释内容(mysql特有) 
-        * 多行注释: /*注释*/
-        * 单行注释中--的方式必须要有空格，其余没说明的情况就是不需要有空格。
-
-3. SQL分类
-    1) DDL(Data Definition Language)数据定义语言
-        用来定义数据库对象：数据库，表，列等。关键字：create, drop,alter 等
-    2) DML(Data Manipulation Language)数据操作语言
-        用来对数据库中表的数据进行增删改。关键字：insert, delete, update 等
-    3) DQL(Data Query Language)数据查询语言
-        用来查询数据库中表的记录(数据)。关键字：select, where 等
-    4) DCL(Data Control Language)数据控制语言(了解)
-        用来定义数据库的访问权限和安全级别，及创建用户。关键字：GRANT， REVOKE 等</code></pre><h3 id="DDL-操作数据库、表"><a href="#DDL-操作数据库、表" class="headerlink" title="DDL:操作数据库、表"></a>DDL:操作数据库、表</h3><pre><code>1. 操作数据库：CRUD
-    1. C(Create):创建
-        * 创建数据库：
-            * create database 数据库名称;
-        * 创建数据库，判断不存在，再创建：
-            * create database if not exists 数据库名称;
-        * 创建数据库，并指定字符集
-            * create database 数据库名称 character set 字符集名;
-        * 练习： 创建db4数据库，判断是否存在，并制定字符集为gbk
-            * create database if not exists db4 character set gbk;
-    2. R(Retrieve)：查询
-        * 查询所有数据库的名称:
-            * show databases;
-            * datadir下面有三个文件夹也就是有三个database，但是为什么我们在终端显示的时候会有四个呢？
-            information_schema：描述mysql数据库的信息的，比如有哪些表？以后要学习视图会用到，并没有实际的物理文件。
-            mysql：核心数据库，存了很多的表
-            performance_schema：对性能提升做操作的数据库，存了很多表
-            sys：随便动，这是一个空的数据库
-            没事别乱动上面的几个数据库的内容。
-
-        * 查询某个数据库的字符集:查询某个数据库的创建语句
-            * show create database 数据库名称;
-    3. U(Update):修改
-        * 修改数据库的字符集
-            * alter database 数据库名称 character set 字符集名称;
-    4. D(Delete):删除
-        * 删除数据库
-            * drop database 数据库名称;
-        * 判断数据库存在，存在再删除
-            * drop database if exists 数据库名称;
-    5. 使用数据库
-        * 查询当前正在使用的数据库名称
-            * select database();
-        * 使用数据库
-            * use 数据库名称;
-
-
-2. 操作表
-    1. C(Create):创建
-        1. 语法：
-            create table 表名(
-                列名1 数据类型1,
-                列名2 数据类型2,
-                ....
-                列名n 数据类型n
-            );
-            * 注意：最后一列，不需要加逗号（,）
-            * 数据库类型：
-                1. int：整数类型
-                    * age int,
-                2. double:小数类型
-                    * score double(5,2)
-                3. date:日期，只包含年月日，yyyy-MM-dd
-                4. datetime:日期，包含年月日时分秒     yyyy-MM-dd HH:mm:ss
-                5. timestamp:时间戳类型    包含年月日时分秒     yyyy-MM-dd HH:mm:ss    
-                    * 如果将来不给这个字段赋值，或赋值为null，则默认使用当前的系统时间，来自动赋值
-
-                6. varchar：字符串
-                    * name varchar(20):姓名最大20个字符
-                    * zhangsan 8个字符  张三 2个字符
-
-
-        * 创建表
-            create table student(
-                id int,
-                name varchar(32),
-                age int ,
-                score double(4,1),
-                birthday date,
-                insert_time timestamp
-            );
-        * 复制表：
-            * create table 表名 like 被复制的表名;          
-    2. R(Retrieve)：查询
-        * 查询某个数据库中所有的表名称
-            * show tables;
-        * 查询表结构
-            * desc 表名;  description
-    3. U(Update):修改
-        1. 修改表名
-            alter table 表名 rename to 新的表名;
-        2. 修改表的字符集
-            alter table 表名 character set 字符集名称;
-        3. 添加一列
-            alter table 表名 add 列名 数据类型;
-        4. 修改列名称 类型
-            alter table 表名 change 列名 新列别 新数据类型;//改列名和类型
-            alter table 表名 modify 列名 新数据类型;//只改类型
-        5. 删除列
-            alter table 表名 drop 列名;
-    4. D(Delete):删除
-        * drop table 表名;
-        * drop table  if exists 表名 ;</code></pre><ul>
-<li>客户端图形化工具：SQLYog</li>
-<li>Mac端有哪些好用的数据库客户端软件？Workbench这是Mysql官方的数据库客户端。DataGrip是jetbrain大厂的数据库客户端，很好用。</li>
-</ul>
-<h3 id="DML：增删改表中数据"><a href="#DML：增删改表中数据" class="headerlink" title="DML：增删改表中数据"></a>DML：增删改表中数据</h3><pre><code>1. 添加数据：
-    * 语法：
-        * insert into 表名(列名1,列名2,...列名n) values(值1,值2,...值n);
-    * 注意：
-        1. 列名和值要一一对应。
-        2. 如果表名后，不定义列名，则默认给所有列添加值
-            insert into 表名 values(值1,值2,...值n);
-        3. 除了数字类型，其他类型需要使用引号(单双都可以)引起来
-2. 删除数据：
-    * 语法：
-        * delete from 表名 [where 条件]
-    * 注意：
-        1. 如果不加条件，则删除表中所有记录。
-        2. 如果要删除所有记录
-            1. delete from 表名; -- 不推荐使用。有多少条记录就会执行多少次删除操作
-            2. TRUNCATE TABLE 表名; -- 推荐使用，效率更高 先删除表，然后再创建一张一样的表。
-3. 修改数据：
-    * 语法：
-        * update 表名 set 列名1 = 值1, 列名2 = 值2,... [where 条件];
-
-    * 注意：
-        1. 如果不加任何条件，则会将表中所有记录全部修改。</code></pre><h3 id="DQL：查询表中的记录"><a href="#DQL：查询表中的记录" class="headerlink" title="DQL：查询表中的记录"></a>DQL：查询表中的记录</h3><pre><code>* select * from 表名;
-
-1. 语法：
-    select
-        字段列表  多个字段逗号分隔
-    from
-        表名列表  多个表名逗号分隔
-    where
-        条件列表
-    group by
-        分组字段  分组（男生组和女生组）
-    having
-        分组之后的条件
-    order by
-        排序   升序和降序
-    limit
-        分页限定
-
-
-2. 基础查询
-    1. 多个字段的查询
-        select 字段名1，字段名2... from 表名；
-        * 注意：
-            * 如果查询所有字段，则可以使用*来替代字段列表。
-    2. 去除重复：
-        * distinct
-        保证结果集中的两条记录完全一样才可以去重。
-    3. 计算列
-        * 一般可以使用四则运算计算一些列的值。（一般只会进行数值型的计算）
-        * ifnull(表达式1,表达式2)：null参与的运算，计算结果都为null
-            * 表达式1：哪个字段需要判断是否为null
-            * 如果该字段为null后的替换值。
-    4. 起别名：
-        * as：as也可以省略，用一个或者多个空格代替
-
-示例代码：
--- 查询姓名和年龄
-select student.name,student.age from student;
--- 查询地址
-select student.address from student;
--- 去除重复
-select distinct student.address from student;
--- 保证结果集中的两条记录完全一样才可以去重。
-select distinct student.name,student.address from student;
--- 四则运算
-select student.name,student.math,student.english,student.math+student.english from student;
--- 四则运算定义别名
-select student.name as 名字,student.math as 数学,student.english as 英语 from student;
--- ifnull函数的使用
-select student.name,student.math,student.english,student.math+ifnull(student.english,0) as 总分 from student;
-
-
-3. 条件查询
-    1. where子句后跟条件
-    2. 运算符
-        * &gt; 、&lt; 、&lt;= 、&gt;= 、= 、&lt;&gt;或者!=
-        * BETWEEN...AND  包含两边的值
-        * IN(集合) 
-        * LIKE：模糊查询
-            * 占位符：
-                * _:单个任意字符
-                * %:多个任意字符（包括零个字符）
-                * 在某些特殊的情况下，查询的条件丽需要使用下划线或者百分号，不希望sql把下划线和百分号当成通配符使用，这就需要使用到转义字符，mysql使用反斜杠\作为转义字符。标准sql语句并没有提供反斜杠\的转义字符，而是使用escape关键字显示进行转义。
--- 标准sql中选出名字以下划线开头的学生
-select * from student where student.name like &apos;\_%&apos; escape &apos;\&apos;;
-        * IS NULL    IS NOT NULL  NULL值不能使用=或者!=来进行判断，只能通过IS NULL或者IS NOT NULL
-        * and  或 &amp;&amp; 推荐使用英文的
-        * or  或 || 推荐使用英文的
-        * not  或 !  推荐使用英文的
-
-            -- 查询年龄大于20岁
-
-            SELECT * FROM student WHERE age &gt; 20;
-
-            SELECT * FROM student WHERE age &gt;= 20;
-
-            -- 查询年龄等于20岁
-            SELECT * FROM student WHERE age = 20;
-
-            -- 查询年龄不等于20岁
-            SELECT * FROM student WHERE age != 20;
-            SELECT * FROM student WHERE age &lt;&gt; 20;
-
-            -- 查询年龄大于等于20 小于等于30
-
-            SELECT * FROM student WHERE age &gt;= 20 &amp;&amp;  age &lt;=30;
-            SELECT * FROM student WHERE age &gt;= 20 AND  age &lt;=30;
-            SELECT * FROM student WHERE age BETWEEN 20 AND 30;
-
-            -- 查询年龄22岁，18岁，25岁的信息
-            SELECT * FROM student WHERE age = 22 OR age = 18 OR age = 25;
-            SELECT * FROM student WHERE age IN (22,18,25);
-
-            -- 查询英语成绩为null
-            SELECT * FROM student WHERE english = NULL; -- 不对的。null值不能使用 = （!=） 判断
-
-            SELECT * FROM student WHERE english IS NULL;
-
-            -- 查询英语成绩不为null
-            SELECT * FROM student WHERE english  IS NOT NULL;
-            -- 查询姓马的有哪些？ like
-            SELECT * FROM student WHERE NAME LIKE &apos;马%&apos;;
-            -- 查询姓名第二个字是化的人
-            SELECT * FROM student WHERE NAME LIKE &quot;_化%&quot;;
-            -- 查询姓名是3个字的人
-            SELECT * FROM student WHERE NAME LIKE &apos;___&apos;;
-            -- 查询姓名中包含德的人
-      SELECT * FROM student WHERE NAME LIKE &apos;%德%&apos;;</code></pre><p>​                </p>
-<p>​    </p>
-]]></content>
-      <categories>
-        <category>SQL</category>
-      </categories>
-      <tags>
-        <tag>Mysql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>搭建Hexo静态博客</title>
-    <url>/2019/11/22/%E6%90%AD%E5%BB%BAHexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h2 id="下载安装Hexo"><a href="#下载安装Hexo" class="headerlink" title="下载安装Hexo"></a>下载安装Hexo</h2><p>1.去网站下载node.js的LTS（长期支持版）</p><a id="more"></a>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">https://nodejs.org/en/</span><br></pre></td></tr></table></figure>
-
-<p>2.切换root成用户</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
-
-<p>3.查看node和npm的版本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-
-<p>4.使用npm安装淘宝的cnpm，可使下载速度更快</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line">#查看cnpm版本</span><br><span class="line">cnpm -v</span><br></pre></td></tr></table></figure>
-
-<p>5.安装Hexo</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">cnpm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-
-<p>6.查看Hexo版本</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用Hexo"><a href="#使用Hexo" class="headerlink" title="使用Hexo"></a>使用Hexo</h2><p>1.建立写博客的目录BlogResources，所有的内容都在此目录中，如果过程中遇到了什么错误，直接删除Hexo目录删除重来即可。</p>
-<p>2.切换到目录BlogResources中，使用下面常用的命令来创建自己博文并且发布。</p>
-<p>3.Hexo的常用命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo hexo init:在一个目录中进行hexo的初始化。</span><br><span class="line"></span><br><span class="line">hexo server:启动博客，用该命令来预览一下自己写的博客，可以通过http://localhost:4000进行本地预览查看。</span><br><span class="line"></span><br><span class="line">hexo new &quot;My New Post&quot;:新建一篇文章。</span><br><span class="line"></span><br><span class="line">hexo clean:清理一下</span><br><span class="line"></span><br><span class="line">hexo generate:把我们的文章生成为网页端的文章。</span><br></pre></td></tr></table></figure>
-
-<p>注意：</p>
-<p>1.只有使用vim编辑的时候才进去那个文章的目录进行编辑，即，上面的命令运行都是在建博客的目录下运行的，即BlogResources目录下面运行的。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#文章所在目录</span><br><span class="line">/Users/ethan/Documents/BlogResources/source/_posts</span><br></pre></td></tr></table></figure>
-
-<p>2.hexo或者hexo help可以查看hexo支持的所有命令及其功能。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> Usage: hexo &lt;command&gt;</span><br><span class="line"> </span><br><span class="line">Commands:</span><br><span class="line"> clean     Remove generated files and cache.</span><br><span class="line"> config    Get or set configurations.</span><br><span class="line"> deploy    Deploy your website.</span><br><span class="line"> generate  Generate static files.</span><br><span class="line"> help      Get help on a command.</span><br><span class="line"> init      Create a new Hexo folder.</span><br><span class="line"> list      List the information of the site</span><br><span class="line"> migrate   Migrate your site from other system to Hexo.</span><br><span class="line"> new       Create a new post.</span><br><span class="line"> publish   Moves a draft post from _drafts to _posts folder.</span><br><span class="line"> render    Render files with renderer plugins.</span><br><span class="line"> server    Start the server.</span><br><span class="line"> version   Display version information.</span><br><span class="line"> </span><br><span class="line"> Global Options:</span><br><span class="line"> --config  Specify config file instead of using _config.yml</span><br><span class="line"> --cwd     Specify the CWD</span><br><span class="line"> --debug   Display all verbose messages in the terminal</span><br><span class="line"> --draft   Display draft posts</span><br><span class="line"> --safe    Disable all plugins and scripts</span><br><span class="line"> --silent  Hide output on console</span><br></pre></td></tr></table></figure>
-
-<p>3.hexo help [command]可以查看command的更多信息。</p>
-<h2 id="博客部署到Github上"><a href="#博客部署到Github上" class="headerlink" title="博客部署到Github上"></a>博客部署到Github上</h2><p>1.在自己的Github上New Repository，命名标准：oucystong.github.io</p>
-<p>注意：用户部署个人博客的Github仓库的命名必须符合特定要求才行（Github用户名.github.io）。</p>
-<p>2.在命令行中BlogResources目录下操作安装一个部署到Github上的一个插件。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
-
-<p>3.修改_config.yml，修改内容如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #repo是仓库地址</span><br><span class="line">  repo: https://github.com/oucystong/oucystong.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
-
-<p>4.在命令行中BlogResources目录下运行如下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#Deploy your website.</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>输入Github的账号和密码，万事大吉，刷新Github的仓库，可以很多推送的内容，这就是Hexo把我们的文章推送到remote产生的文件。</p>
-<p>5.测试是否可以通过一个Github的网址进行访问。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
-
-<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>1.一个比较流行的主题</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/litten/hexo-theme-yilia</span><br></pre></td></tr></table></figure>
-
-<p>2.克隆主题到theme目录下的yilia目录下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git themes/yilia</span><br></pre></td></tr></table></figure>
-
-<p>3.修改_config.yml，修改内容如下所示：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br><span class="line">#theme:和主题之间必须要有空格</span><br></pre></td></tr></table></figure>
-
-<p>4.执行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
-<p>5.推到remote，执行命令</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
-<h2 id="以后的个人博客地址"><a href="#以后的个人博客地址" class="headerlink" title="以后的个人博客地址"></a>以后的个人博客地址</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
-
-<h2 id="小建议"><a href="#小建议" class="headerlink" title="小建议"></a>小建议</h2><p>注意问题：</p>
-<p>1.所有命令的执行都是基于建立博客的根目录进行，即BlogResources，除非使用vim编辑自己的博文会切换到_post目录下面，所以时常使用pwd查看当前所在的路径。</p>
-<p>2.建议使用root用户权限发布博文，发布博文时使用如下命令切换。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
-
-<p>3.切换到普通用户</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
-
-<p>4.修改博文时的最好办法：切换到root用户，pwd查看当前路径，切换到博文所在路径，使用open document命令将Markdown文件以默认程序打开，比如Typora，可以以所见即所得的方式编辑Markdown文档（使用vim编辑各种配置文件还行，编辑Markdown文件有点浪费时间），编辑完之后在终端以root身份clean、generate、server预览、deploy推送到remote。</p>
-<p>可能遇到的问题：open document，文档被锁定，无法编辑，直接将该文档进行复制出一个副本，对副本进行编辑，将原文件删除（不要用trash命令），将编辑好之后的新文件放入。</p>
-]]></content>
-      <categories>
-        <category>Hexo</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MySQL约束</title>
     <url>/2019/11/22/MySQL%E7%BA%A6%E6%9D%9F/</url>
     <content><![CDATA[<h2 id="今日内容"><a href="#今日内容" class="headerlink" title="今日内容"></a>今日内容</h2><pre><code>1. DQL:查询语句
@@ -1965,6 +1998,90 @@ select avg(student.math) from student;
       </categories>
       <tags>
         <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搭建Hexo静态博客</title>
+    <url>/2019/11/22/%E6%90%AD%E5%BB%BAHexo%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h2 id="下载安装Hexo"><a href="#下载安装Hexo" class="headerlink" title="下载安装Hexo"></a>下载安装Hexo</h2><p>1.去网站下载node.js的LTS（长期支持版）</p><a id="more"></a>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">https://nodejs.org/en/</span><br></pre></td></tr></table></figure>
+
+<p>2.切换root成用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
+
+<p>3.查看node和npm的版本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
+
+<p>4.使用npm安装淘宝的cnpm，可使下载速度更快</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org</span><br><span class="line">#查看cnpm版本</span><br><span class="line">cnpm -v</span><br></pre></td></tr></table></figure>
+
+<p>5.安装Hexo</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#全局安装</span><br><span class="line">cnpm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<p>6.查看Hexo版本</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用Hexo"><a href="#使用Hexo" class="headerlink" title="使用Hexo"></a>使用Hexo</h2><p>1.建立写博客的目录BlogResources，所有的内容都在此目录中，如果过程中遇到了什么错误，直接删除Hexo目录删除重来即可。</p>
+<p>2.切换到目录BlogResources中，使用下面常用的命令来创建自己博文并且发布。</p>
+<p>3.Hexo的常用命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo hexo init:在一个目录中进行hexo的初始化。</span><br><span class="line"></span><br><span class="line">hexo server:启动博客，用该命令来预览一下自己写的博客，可以通过http://localhost:4000进行本地预览查看。</span><br><span class="line"></span><br><span class="line">hexo new &quot;My New Post&quot;:新建一篇文章。</span><br><span class="line"></span><br><span class="line">hexo clean:清理一下</span><br><span class="line"></span><br><span class="line">hexo generate:把我们的文章生成为网页端的文章。</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<p>1.只有使用vim编辑的时候才进去那个文章的目录进行编辑，即，上面的命令运行都是在建博客的目录下运行的，即BlogResources目录下面运行的。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#文章所在目录</span><br><span class="line">/Users/ethan/Documents/BlogResources/source/_posts</span><br></pre></td></tr></table></figure>
+
+<p>2.hexo或者hexo help可以查看hexo支持的所有命令及其功能。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"> Usage: hexo &lt;command&gt;</span><br><span class="line"> </span><br><span class="line">Commands:</span><br><span class="line"> clean     Remove generated files and cache.</span><br><span class="line"> config    Get or set configurations.</span><br><span class="line"> deploy    Deploy your website.</span><br><span class="line"> generate  Generate static files.</span><br><span class="line"> help      Get help on a command.</span><br><span class="line"> init      Create a new Hexo folder.</span><br><span class="line"> list      List the information of the site</span><br><span class="line"> migrate   Migrate your site from other system to Hexo.</span><br><span class="line"> new       Create a new post.</span><br><span class="line"> publish   Moves a draft post from _drafts to _posts folder.</span><br><span class="line"> render    Render files with renderer plugins.</span><br><span class="line"> server    Start the server.</span><br><span class="line"> version   Display version information.</span><br><span class="line"> </span><br><span class="line"> Global Options:</span><br><span class="line"> --config  Specify config file instead of using _config.yml</span><br><span class="line"> --cwd     Specify the CWD</span><br><span class="line"> --debug   Display all verbose messages in the terminal</span><br><span class="line"> --draft   Display draft posts</span><br><span class="line"> --safe    Disable all plugins and scripts</span><br><span class="line"> --silent  Hide output on console</span><br></pre></td></tr></table></figure>
+
+<p>3.hexo help [command]可以查看command的更多信息。</p>
+<h2 id="博客部署到Github上"><a href="#博客部署到Github上" class="headerlink" title="博客部署到Github上"></a>博客部署到Github上</h2><p>1.在自己的Github上New Repository，命名标准：oucystong.github.io</p>
+<p>注意：用户部署个人博客的Github仓库的命名必须符合特定要求才行（Github用户名.github.io）。</p>
+<p>2.在命令行中BlogResources目录下操作安装一个部署到Github上的一个插件。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure>
+
+<p>3.修改_config.yml，修改内容如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Deployment</span><br><span class="line">## Docs: https://hexo.io/docs/deployment.html</span><br><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  #repo是仓库地址</span><br><span class="line">  repo: https://github.com/oucystong/oucystong.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+
+<p>4.在命令行中BlogResources目录下运行如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#Deploy your website.</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>输入Github的账号和密码，万事大吉，刷新Github的仓库，可以很多推送的内容，这就是Hexo把我们的文章推送到remote产生的文件。</p>
+<p>5.测试是否可以通过一个Github的网址进行访问。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
+
+<h2 id="更换博客主题"><a href="#更换博客主题" class="headerlink" title="更换博客主题"></a>更换博客主题</h2><p>1.一个比较流行的主题</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://github.com/litten/hexo-theme-yilia</span><br></pre></td></tr></table></figure>
+
+<p>2.克隆主题到theme目录下的yilia目录下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/litten/hexo-theme-yilia.git themes/yilia</span><br></pre></td></tr></table></figure>
+
+<p>3.修改_config.yml，修改内容如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Extensions</span><br><span class="line">## Plugins: https://hexo.io/plugins/</span><br><span class="line">## Themes: https://hexo.io/themes/</span><br><span class="line">theme: yilia</span><br><span class="line">#theme:和主题之间必须要有空格</span><br></pre></td></tr></table></figure>
+
+<p>4.执行下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+
+<p>5.推到remote，执行命令</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h2 id="以后的个人博客地址"><a href="#以后的个人博客地址" class="headerlink" title="以后的个人博客地址"></a>以后的个人博客地址</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https://oucystong.github.io/</span><br></pre></td></tr></table></figure>
+
+<h2 id="小建议"><a href="#小建议" class="headerlink" title="小建议"></a>小建议</h2><p>注意问题：</p>
+<p>1.所有命令的执行都是基于建立博客的根目录进行，即BlogResources，除非使用vim编辑自己的博文会切换到_post目录下面，所以时常使用pwd查看当前所在的路径。</p>
+<p>2.建议使用root用户权限发布博文，发布博文时使用如下命令切换。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo su</span><br><span class="line">#输入密码</span><br></pre></td></tr></table></figure>
+
+<p>3.切换到普通用户</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">exit</span><br></pre></td></tr></table></figure>
+
+<p>4.修改博文时的最好办法：切换到root用户，pwd查看当前路径，切换到博文所在路径，使用open document命令将Markdown文件以默认程序打开，比如Typora，可以以所见即所得的方式编辑Markdown文档（使用vim编辑各种配置文件还行，编辑Markdown文件有点浪费时间），编辑完之后在终端以root身份clean、generate、server预览、deploy推送到remote。</p>
+<p>可能遇到的问题：open document，文档被锁定，无法编辑，直接将该文档进行复制出一个副本，对副本进行编辑，将原文件删除（不要用trash命令），将编辑好之后的新文件放入。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
       </tags>
   </entry>
 </search>
